@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "skillVersion": "1.3.0",
+  "generatedAt": "2025-07-15",
+  "lastUpdated": "2026-08-13",
+  "workspaceRoot": "/Users/tarun.goel/Devtools/tarun_ibm_work/aws-mainframe-modernization-carddemo",
+  "extractionRoot": "bob-z-knowledge-extract/",
+  "applicationName": "CardDemo",
+  "applicationNameSource": "README.md",
+  "inputMode": "workspace",
+  "scope": {
+    "sourceRoots": [
+      "app/cbl",
+      "app/asm",
+      "app/app-authorization-ims-db2-mq/cbl",
+      "app/app-transaction-type-db2/cbl",
+      "app/app-vsam-mq/cbl"
+    ],
+    "languagesPresent": ["COBOL", "HLASM", "JCL", "COBOL-copybook", "BMS", "CICS-CSD", "JCL-proc"],
+    "languagesAbsent": ["PL/I", "REXX"]
+  },
+  "environment": {
+    "activeMode": "Z Code",
+    "advancedMode": true,
+    "zUnderstandConfigured": false,
+    "localScannerMetadata": "/Users/tarun.goel/Library/Application Support/IBM Bob/User/workspaceStorage/e32e70681dc2246916f77c4fd8bd857e/IBM.bob-z-extension/.tmi/WCA4ZTMIOutput/ScannerOutput.db",
+    "bobIdeVersion": "",
+    "zPremiumVersion": ""
+  },
+  "capabilityMap": {
+    "generateDataDictionary": "ui-only — autonomous fallback via get_variables + start_subtask",
+    "generateDocumentation": "ui-only — autonomous fallback via start_subtask",
+    "explainCode": "ui-only — on demand",
+    "zCodeScan": "ui-only — autonomous complexity proxy via get_paragraphs",
+    "getControlFlow": "available",
+    "getParagraphs": "available",
+    "scanProgram": "available",
+    "getVariables": "available — serial only, explicit databasePath required",
+    "impactAnalysis": "unavailable — no Z Understand server",
+    "implementationPlanning": "unavailable — no Z Understand server",
+    "syncDataDictionary": "unavailable — no Z Understand server",
+    "getProjectTools": "unavailable — no Z Understand server"
+  },
+  "knownLimitations": [
+    "IBM MQ system copybooks (CMQGMOV, CMQPMOV, CMQMDV, CMQODV, CMQV, CMQTML) not in repo — MQ structure field names will be absent from DD for: COACCT01, CODATE01, COPAUA0C",
+    "get_variables must be called serially — parallel calls cause UNIQUE constraint failed on ScannerOutput.db",
+    "Z Code Scan, Generate documentation, Generate data dictionary are UI-only workflows — autonomous fallback path used for all three"
+  ],
+  "batches": [
+    {
+      "batchId": "batch-1",
+      "date": "2025-07-15",
+      "programsInBatch": 46,
+      "stepsDone": ["scan_program", "get_paragraphs (core 31 programs)", "SQL dependency queries", "application-architecture doc", "paragraph-index doc", "internal-dependencies.json", "complexity-metrics.csv (source=sql-paragraph-count)", "cics-transactions-bms-maps.md", "vsam-file-structures.md", "job-to-program-map.md", "coding-standards.md"],
+      "stepsPending": ["get_variables serial run (all 44 COBOL)", "start_subtask documentation groups (all 44 COBOL)", "explain-code (top 5 by complexity)", "z-code-scan (ui-only, pending interactive run)", "optional-module programs documentation"]
+    }
+  ],
+  "coverage": {
+    "inventoryCount": 46,
+    "ddDone": 0,
+    "ddApproved": 0,
+    "docDone": 0,
+    "docPartial": 31,
+    "explainDone": 0,
+    "zcodescanDone": 0,
+    "completeProgramCount": 0,
+    "note": "docPartial=31: core programs have paragraph-index + architecture doc from SQL/get_paragraphs (autonomous batch-1). docDone counts doc_generated=Y only — requires IBM workflow or start_subtask completion. No program is complete (dd_generated=Y AND dd_approved=Y AND doc_generated=Y required)."
+  },
+  "approvalPosture": "auto-approved",
+  "notApplicable": [
+    "PL/I — no .pli or .pl1 files found in workspace",
+    "REXX — no .rex or .rexx files found in workspace",
+    "ISO 5055 scoring — no Z Premium equivalent",
+    "CVE mapping — no Z Premium equivalent"
+  ],
+  "outOfScope": [
+    "06-database/schema/ — DB2/IMS DDL analysis requires DBA tooling outside Bob",
+    "06-database/constraints-and-triggers.md — requires DBA tooling outside Bob",
+    "06-database/table-usage-map.json — requires get_project_tables; Z Understand unavailable",
+    "13-impact-analysis/ — requires /impact-analysis; Z Understand unavailable",
+    "14-implementation-plans/ — requires /implementation-planning; Z Understand unavailable"
+  ]
+}

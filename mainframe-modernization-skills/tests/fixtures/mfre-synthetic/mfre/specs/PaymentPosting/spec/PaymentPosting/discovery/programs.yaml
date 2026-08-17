@@ -1,0 +1,6 @@
+function: PaymentPosting
+programs:
+- name: SYNPAY1
+  type: cobol
+  role: payment capture and balance update
+source: assessment_decomp

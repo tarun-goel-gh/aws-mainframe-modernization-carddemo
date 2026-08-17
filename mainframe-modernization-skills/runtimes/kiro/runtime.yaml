@@ -1,0 +1,54 @@
+# Kiro runtime recipe.
+#
+# Generated like every other variant, deliberately. Treating src/ as "the Kiro copy" would let Kiro
+# become the privileged variant whose paths and front matter drift from the rest, and Kiro is where
+# development happens — so that risk is real rather than theoretical.
+
+runtime: kiro
+display_name: Kiro
+
+install:
+  # Relative to the target repository root. dist/kiro/ mirrors this exactly, so `cp -R dist/kiro/.`
+  # into a repo root is a correct install with no further instruction.
+  project_scope: .kiro/skills
+  user_scope: ~/.kiro/skills
+
+tokens:
+  SKILLS_ROOT: .kiro/skills
+
+frontmatter:
+  # Kiro is the origin format, so nothing is dropped here.
+  keep:
+    - name
+    - description
+    - compatibility
+    - license
+    - metadata
+  drop: []
+  add: {}
+
+fragments:
+  mcp-setup: fragments/mcp-setup.md
+
+mcp:
+  # The aws-transform Power supplies awslabs.aws-transform-mcp-server, so there is no config file to
+  # ship. This is the only runtime where that is true.
+  provisioning: power
+  power_name: aws-transform
+  server_name: aws-transform-mcp
+  ships_config: false
+
+project_instructions:
+  # Kiro uses steering files rather than a single instructions file. The suite ships none, so nothing
+  # is emitted; listed here so the absence is a recorded decision rather than an oversight.
+  file: null
+  mechanism: .kiro/steering/*.md
+
+# Prose tokens. Discovered during step 2: grepping for `.kiro/` paths found 11 occurrences, but the
+# product NAME appears in prose too — a troubleshooting step, an activation note, a section heading and
+# a port table. Those are runtime-specific in exactly the same way and were missed by a path-only scan.
+prose_tokens:
+  RUNTIME_NAME: Kiro
+  # No backticks: this value is substituted into the `compatibility` front-matter scalar as well as
+  # into prose, and adding markup there would be a gratuitous change to the shipped text.
+  MCP_PREREQUISITE: "the aws-transform Kiro power (MCP server)"

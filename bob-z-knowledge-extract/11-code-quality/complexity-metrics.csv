@@ -1,0 +1,32 @@
+program_name,paragraph_count,abend_paragraphs,error_paragraphs,complexity_rank,source,notes
+COACTUPC,101,2,0,1,sql-paragraph-count,Highest complexity — account update CICS program (4236 lines)
+COCRDUPC,47,2,0,2,sql-paragraph-count,Credit card update
+COCRDLIC,41,0,0,3,sql-paragraph-count,Credit card list
+COACTVWC,37,1,0,4,sql-paragraph-count,Account view
+COCRDSLC,36,1,0,5,sql-paragraph-count,Credit card view
+CBTRN03C,27,1,0,6,sql-paragraph-count,Transaction report batch
+CBTRN02C,27,1,0,7,sql-paragraph-count,Transaction posting batch (core batch)
+CBSTM03A,26,2,0,8,sql-paragraph-count,Statement generator
+CBACT04C,23,1,0,9,sql-paragraph-count,Interest calculator
+CBEXPORT,21,1,0,10,sql-paragraph-count,Data export
+COTRN02C,18,0,0,11,sql-paragraph-count,Transaction add CICS
+CBTRN01C,18,1,0,12,sql-paragraph-count,Transaction validation batch
+CBACT01C,17,1,0,13,sql-paragraph-count,Account file reader
+COUSR00C,16,0,0,14,sql-paragraph-count,User list CICS
+COTRN00C,16,0,0,15,sql-paragraph-count,Transaction list CICS
+COBIL00C,16,0,0,16,sql-paragraph-count,Bill payment CICS
+CBIMPORT,16,1,1,17,sql-paragraph-count,Data import (has error handling paragraph)
+CBSTM03B,14,1,0,18,sql-paragraph-count,Statement sub-program
+COUSR03C,11,0,0,19,sql-paragraph-count,Delete user CICS
+COUSR02C,11,0,0,20,sql-paragraph-count,Update user CICS
+CORPT00C,10,0,0,21,sql-paragraph-count,Transaction report CICS
+COUSR01C,9,0,0,22,sql-paragraph-count,Add user CICS
+COTRN01C,9,0,0,23,sql-paragraph-count,Transaction view CICS
+COADM01C,8,0,1,24,sql-paragraph-count,Admin menu CICS
+COMEN01C,7,0,0,25,sql-paragraph-count,Main menu CICS
+COSGN00C,6,0,0,26,sql-paragraph-count,Signon CICS
+CBCUS01C,6,1,0,27,sql-paragraph-count,Customer file reader
+CBACT03C,6,1,0,28,sql-paragraph-count,XREF file reader
+CBACT02C,6,1,0,29,sql-paragraph-count,Card file reader
+CSUTLDTC,3,0,0,30,sql-paragraph-count,Date conversion utility
+COBSWAIT,1,0,0,31,sql-paragraph-count,Batch wait program

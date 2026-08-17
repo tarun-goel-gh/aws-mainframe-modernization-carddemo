@@ -1,0 +1,21 @@
+# AWS Transform MCP server for mainframe-reverse-engineering.
+#
+# MERGE this section into your existing ~/.codex/config.toml or the project's .codex/config.toml.
+# Do not replace the file — config.toml holds unrelated settings.
+#
+# AWS_PROFILE and AWS_REGION are pinned deliberately. The server resolves credentials ONCE at startup
+# and caches the result. Launched from a shell whose SSO token was stale, it reports failures that look
+# exactly like an unconfigured AWS account, and that confusion has already sent someone to provision
+# infrastructure they already owned. Pinning removes the failure mode.
+#
+# Codex has no equivalent of reconnecting a single server from a UI, so recovery means restarting the
+# session. That makes pinning more important here, not less.
+
+[mcp_servers.aws-transform]
+command = "uvx"
+args = ["awslabs.aws-transform-mcp-server@latest"]
+
+[mcp_servers.aws-transform.env]
+AWS_PROFILE = "REPLACE_WITH_YOUR_PROFILE"
+AWS_REGION = "REPLACE_WITH_YOUR_REGION"
+FASTMCP_LOG_LEVEL = "ERROR"

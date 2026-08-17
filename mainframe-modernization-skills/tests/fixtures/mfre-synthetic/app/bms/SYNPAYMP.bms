@@ -1,0 +1,19 @@
+*********************************************************************
+* SYNPAYMP - SYNTHETIC FIXTURE MAPSET. NOT REAL SOURCE.             *
+*********************************************************************
+SYNPAYS  DFHMSD TYPE=&SYSPARM,MODE=INOUT,LANG=COBOL,STORAGE=AUTO,     X
+               TIOAPFX=YES,CTRL=(FREEKB,FRSET)
+SYNPAYM  DFHMDI SIZE=(24,80),LINE=1,COLUMN=1
+TITLE    DFHMDF POS=(1,20),LENGTH=32,ATTRB=(ASKIP,NORM),              X
+               INITIAL='SYNTHETIC PAYMENT POSTING'
+ACCTLBL  DFHMDF POS=(5,5),LENGTH=12,ATTRB=(ASKIP,NORM),               X
+               INITIAL='ACCOUNT ID :'
+ACCTID   DFHMDF POS=(5,19),LENGTH=11,ATTRB=(UNPROT,IC),               X
+               INITIAL='___________'
+AMTLBL   DFHMDF POS=(7,5),LENGTH=12,ATTRB=(ASKIP,NORM),               X
+               INITIAL='AMOUNT     :'
+PAYAMT   DFHMDF POS=(7,19),LENGTH=12,ATTRB=(UNPROT,NUM),              X
+               INITIAL='____________'
+ERRMSG   DFHMDF POS=(23,1),LENGTH=79,ATTRB=(ASKIP,BRT)
+         DFHMSD TYPE=FINAL
+         END

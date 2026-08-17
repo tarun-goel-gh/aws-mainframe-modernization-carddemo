@@ -1,0 +1,8 @@
+docs=31
+grounded=90
+absent=111
+notextracted=0
+statuses=complete:3,partial:24,unavailable:4
+delivered=2/5
+appName=legacy-billing
+appNameSource=derived from upstream sourceOrigin

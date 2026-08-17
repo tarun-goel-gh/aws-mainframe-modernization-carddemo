@@ -1,0 +1,75 @@
+name: ci
+
+# Every gate here maps to a defect that actually occurred. See docs/DEFECTS.md, "Defect-to-guard map".
+# Do not relax one without reading the entry it maps to — several exist because their absence produced
+# either a disclosure or silently wrong output.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Scripts compile and parse
+        run: |
+          python3 -m compileall -q tools
+          [ -d src/skills ] && python3 -m compileall -q src/skills || true
+          for f in $(find tools src tests -name '*.sh' 2>/dev/null); do bash -n "$f"; done
+
+      - name: No bash 4 constructs
+        # macOS ships bash 3.2 and is a supported host. `bash -n` does not catch this: a bad
+        # substitution aborts the enclosing command at runtime, which once let a missing required
+        # argument pass validation entirely.
+        run: bash tools/check_bash32.sh
+
+      - name: No credentials or principal identity
+        # A published archive once carried an assumed-role ARN including an SSO permission set name and
+        # a corporate email address. Runs over fixtures too.
+        run: python3 tools/scan_secrets.py .
+
+      - name: No customer specifics in source
+        run: python3 tools/scan_secrets.py --generic src runtimes templates tools tests
+
+      - name: Relative links resolve
+        run: python3 tools/check_links.py
+
+      - name: Front matter valid
+        if: ${{ hashFiles('src/skills/**/SKILL.md') != '' }}
+        run: python3 tools/lint_frontmatter.py
+
+      - name: dist/ matches a fresh build
+        # The only thing that makes committed generated output safe. A hand-edited variant fails here
+        # rather than shipping.
+        if: ${{ hashFiles('src/skills/**/SKILL.md') != '' }}
+        run: |
+          python3 tools/build.py --all --quiet
+          git diff --exit-code -- dist/ || {
+            echo "::error::dist/ differs from a fresh build. Edit src/, never dist/."
+            exit 1
+          }
+
+  golden:
+    runs-on: ubuntu-latest
+    # Skipped until the synthetic fixture exists. See docs/BASELINES.md.
+    if: ${{ hashFiles('tests/fixtures/mfre-synthetic/state.json') != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Golden run and determinism
+        # Asserts document count, grounded/absent/not-extracted, delivered-of-discovered, the derived
+        # application name, and that two runs are byte-identical apart from the four wall-clock fields.
+        run: bash tests/run_golden.sh

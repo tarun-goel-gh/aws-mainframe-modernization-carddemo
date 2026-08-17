@@ -1,0 +1,21 @@
+{
+  "generated_at": "2020-01-01T00:00:00Z",
+  "nodes": [
+    { "id": "SYNBILL1", "type": "COBOL" },
+    { "id": "SYNBILL2", "type": "COBOL" },
+    { "id": "SYNPAY1", "type": "COBOL" },
+    { "id": "SYNINVJ1", "type": "JCL" },
+    { "id": "SYNACCT", "type": "COPYBOOK" },
+    { "id": "SYNBAL.VSAM", "type": "DATASET" },
+    { "id": "SYNBEVT.VSAM", "type": "DATASET" }
+  ],
+  "edges": [
+    { "from": "SYNINVJ1", "to": "SYNBILL1", "kind": "executes" },
+    { "from": "SYNINVJ1", "to": "SYNBILL2", "kind": "executes" },
+    { "from": "SYNBILL1", "to": "SYNACCT", "kind": "copies" },
+    { "from": "SYNBILL1", "to": "SYNBEVT.VSAM", "kind": "reads" },
+    { "from": "SYNBILL2", "to": "SYNBAL.VSAM", "kind": "reads" },
+    { "from": "SYNPAY1", "to": "SYNBAL.VSAM", "kind": "writes" },
+    { "from": "SYNPAY1", "to": "SYNACCT", "kind": "copies" }
+  ]
+}

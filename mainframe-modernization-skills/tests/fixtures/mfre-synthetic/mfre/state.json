@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "runId": "mfre-fixture-0001",
+  "stage": "report",
+  "autonomy": {
+    "mode": "autonomous",
+    "scope": [
+      "Invoice Generation",
+      "Payment Posting",
+      "Statement Archival"
+    ],
+    "excludedInfrastructure": [
+      {
+        "name": "Build and Release Tooling",
+        "signals": [
+          "compile and link-edit utilities referenced in description",
+          "very low LOC density (88 LOC across 3 entry points) — thin wrappers"
+        ]
+      }
+    ]
+  },
+  "aws": {
+    "accountId": "123456789012",
+    "region": "us-east-1",
+    "profile": "fixture-profile",
+    "regionSource": "flag"
+  },
+  "workspace": {
+    "name": "Fixture-Workspace",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "status": "ACTIVE",
+    "createdAt": "2020-01-01T00:00:00Z"
+  },
+  "job": {
+    "name": "SyntheticFixture-2020-01-01-0000",
+    "id": "11111111-1111-1111-1111-111111111111",
+    "status": "COMPLETED",
+    "createdAt": "2020-01-01T00:00:00Z"
+  },
+  "connector": {
+    "name": "Mainframe modernization",
+    "id": "22222222-2222-2222-2222-222222222222",
+    "status": "ACTIVE"
+  },
+  "source": {
+    "origin": "s3://synthetic-fixtures/legacy-billing-main.zip",
+    "intake": "s3-zip",
+    "glossaryProvenance": "absent",
+    "fileCounts": {
+      "cobol": 3,
+      "copybooks": 1,
+      "jcl": 1,
+      "bms": 1
+    }
+  },
+  "discovery": {
+    "functions": [
+      {
+        "name": "Invoice Generation",
+        "slug": "InvoiceGeneration",
+        "category": "batch",
+        "description": "Produces customer invoices from posted billing events and writes the invoice extract.",
+        "dataPaths": 4,
+        "entryPoints": 2,
+        "loc": 620,
+        "missingFiles": 0
+      },
+      {
+        "name": "Payment Posting",
+        "slug": "PaymentPosting",
+        "category": "online",
+        "description": "Accepts a payment against an account and posts it to the balance file.",
+        "dataPaths": 3,
+        "entryPoints": 1,
+        "loc": 410,
+        "missingFiles": 0
+      },
+      {
+        "name": "Statement Archival",
+        "slug": "StatementArchival",
+        "category": "batch",
+        "description": "Copies finalised statements to the archive dataset and prunes the working file.",
+        "dataPaths": 2,
+        "entryPoints": 1,
+        "loc": 180,
+        "missingFiles": 1
+      },
+      {
+        "name": "Build and Release Tooling",
+        "slug": "BuildAndReleaseTooling",
+        "category": "batch",
+        "description": "Compile, link-edit and load-module promotion utilities.",
+        "dataPaths": 1,
+        "entryPoints": 3,
+        "loc": 88,
+        "missingFiles": 0
+      },
+      {
+        "name": "Dormant Account Sweep",
+        "slug": "DormantAccountSweep",
+        "category": "batch",
+        "description": "Identifies dormant accounts. Discovered but never selected for extraction.",
+        "dataPaths": 1,
+        "entryPoints": 1,
+        "loc": 140,
+        "missingFiles": 0
+      }
+    ],
+    "catalogSource": "discovery/business_function.csv"
+  },
+  "gates": {
+    "G0": "pass",
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G4": "pass_with_gaps",
+    "G5": "pass"
+  },
+  "answeredTasks": [],
+  "awaitingUserTasks": [],
+  "functions": {
+    "Invoice Generation": {
+      "slug": "InvoiceGeneration",
+      "status": "succeeded",
+      "attempts": 1,
+      "specZip": "spec_gen_specs_20200101_000200.zip",
+      "localPath": "tests/fixtures/mfre-synthetic/mfre/specs/InvoiceGeneration",
+      "metrics": {
+        "reqF": 6,
+        "reqN": 1,
+        "captured": 5,
+        "rulesTotal": 5,
+        "notApplicable": 0
+      }
+    },
+    "Payment Posting": {
+      "slug": "PaymentPosting",
+      "status": "succeeded",
+      "attempts": 2,
+      "specZip": "spec_gen_specs_20200101_000300.zip",
+      "localPath": "tests/fixtures/mfre-synthetic/mfre/specs/PaymentPosting",
+      "metrics": {
+        "reqF": 4,
+        "reqN": 0,
+        "captured": 3,
+        "rulesTotal": 4,
+        "notApplicable": 1
+      }
+    },
+    "Statement Archival": {
+      "slug": "StatementArchival",
+      "status": "failed",
+      "attempts": 2,
+      "specZip": "spec_gen_specs_20200101_000400.zip",
+      "localPath": "tests/fixtures/mfre-synthetic/mfre/specs/StatementArchival",
+      "failure": "requirements generation returned an empty programs.yaml with no requirements",
+      "metrics": {}
+    }
+  },
+  "report": {},
+  "updatedAt": "2020-01-01T00:05:00Z",
+  "notes": [
+    "Synthetic fixture. Every identifier here is fictional and must remain so — tests/fixtures is scanned by make check-generic and make check-secrets."
+  ]
+}

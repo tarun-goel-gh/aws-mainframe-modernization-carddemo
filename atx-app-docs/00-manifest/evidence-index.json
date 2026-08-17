@@ -1,0 +1,169 @@
+{
+  "generatedAt": "2026-08-14T09:51:14Z",
+  "mfreRoot": ".atx/mfre",
+  "artifacts": [
+    {
+      "path": ".atx/mfre/state.json",
+      "sha256": "a4204a2c735bea5596fc1000210999c7a4afc659110c880a5130453563b12634",
+      "plans": [
+        "all"
+      ]
+    },
+    {
+      "path": ".atx/mfre/discovery/business_function.csv",
+      "sha256": "7e60ddc25397515ca655cfc0a8151dfbf65a48b2ad19ad6f518eb8ad09ba5090",
+      "plans": [
+        "atx-discovery",
+        "atx-business",
+        "atx-operations"
+      ]
+    },
+    {
+      "path": ".atx/mfre/discovery/business_function.json",
+      "sha256": "a4267802f7ac3834cc2dcd91ecd371b90c9c8652f9a66389e6b88cb619ae5eac",
+      "plans": [
+        "atx-structure",
+        "atx-integration",
+        "atx-business"
+      ]
+    },
+    {
+      "path": ".atx/mfre/report.md",
+      "sha256": "34226c804918890465968e16ad0eb81d391b51867166f42b391d09f6b5a8d9d7",
+      "plans": [
+        "atx-quality",
+        "atx-discovery"
+      ]
+    },
+    {
+      "path": ".atx/mfre/manifest.json",
+      "sha256": "0921e13bf61eb2fe382803048c450500be5e3238119551b462f808dd6bbff166",
+      "plans": [
+        "atx-discovery"
+      ]
+    },
+    {
+      "path": ".atx/mfre/analysis/snapshot-manifest.json",
+      "sha256": "c3b1c527558d97ed537540dda40458a9afdf5886aa3f51e87235f0c89425c341",
+      "plans": [
+        "atx-discovery",
+        "atx-data",
+        "atx-quality"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/AccountBalanceandTransactionProcessing/spec/AccountBalanceandTransactionProcessing/requirements.md",
+      "sha256": "0e1b77c7385e0451efae8191a4aec2f030d35d4719e1e45ca4646262741ac2a3",
+      "function": "Account Balance and Transaction Processing",
+      "plans": [
+        "atx-business",
+        "atx-module",
+        "atx-api"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/AccountBalanceandTransactionProcessing/spec/AccountBalanceandTransactionProcessing/traceability.yaml",
+      "sha256": "34cc411909faaff1ed03ca85280558ac60216b0a1d15d930cf6d0309a953a189",
+      "function": "Account Balance and Transaction Processing",
+      "plans": [
+        "atx-module",
+        "atx-quality"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/CreditCardRecordManagement/spec/CreditCardRecordManagement/requirements.md",
+      "sha256": "6e9447ea92bb5fdb68a5327282afed4e71e44735ee28532a110fc4a7c7a3b6da",
+      "function": "Credit Card Record Management",
+      "plans": [
+        "atx-business",
+        "atx-module",
+        "atx-api"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/CreditCardRecordManagement/spec/CreditCardRecordManagement/traceability.yaml",
+      "sha256": "3e2d9d3d30e07b2bbf673f6af16adc74d13c19bbef2c5be68e5b829c7812d847",
+      "function": "Credit Card Record Management",
+      "plans": [
+        "atx-module",
+        "atx-quality"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/CustomerandAccountDataExportandImport/spec/CustomerandAccountDataExportandImport/requirements.md",
+      "sha256": "1e2d365109cf81450147e1a5c4a3e192c351ba674c0de324a96e41129c9d2edf",
+      "function": "Customer and Account Data Export and Import",
+      "plans": [
+        "atx-business",
+        "atx-module",
+        "atx-api"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/CustomerandAccountDataExportandImport/spec/CustomerandAccountDataExportandImport/traceability.yaml",
+      "sha256": "f593deace38946f73c00d437cfb8723af7a8996740c62e45e0a8f4248210735a",
+      "function": "Customer and Account Data Export and Import",
+      "plans": [
+        "atx-module",
+        "atx-quality"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/PaymentAuthorizationProcessingandFraudReview/spec/PaymentAuthorizationProcessingandFraudReview/requirements.md",
+      "sha256": "85abccfd3829b47dbe824c03bd6bac3120b428b4e18c36697786be469cc07fcb",
+      "function": "Payment Authorization Processing and Fraud Review",
+      "plans": [
+        "atx-business",
+        "atx-module",
+        "atx-api"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/PaymentAuthorizationProcessingandFraudReview/spec/PaymentAuthorizationProcessingandFraudReview/traceability.yaml",
+      "sha256": "bd7fefa2f7a92c155f13cf60ca1cf685387aad17f00dc3278765720dcc4c4cb1",
+      "function": "Payment Authorization Processing and Fraud Review",
+      "plans": [
+        "atx-module",
+        "atx-quality"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/TransactionTypeReferenceDataMaintenance/spec/TransactionTypeReferenceDataMaintenance/requirements.md",
+      "sha256": "1e8a3ba40b41550e7f7cb23e1b390b0f6c547213a9865de3fd68303610f1a983",
+      "function": "Transaction Type Reference Data Maintenance",
+      "plans": [
+        "atx-business",
+        "atx-module",
+        "atx-api"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/TransactionTypeReferenceDataMaintenance/spec/TransactionTypeReferenceDataMaintenance/traceability.yaml",
+      "sha256": "823db17002a2041156d08ec68fdf9e07e30b75ba274e9e096651ad79bdea3785",
+      "function": "Transaction Type Reference Data Maintenance",
+      "plans": [
+        "atx-module",
+        "atx-quality"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/UserSecurityProfileManagement/spec/UserSecurityProfileManagement/requirements.md",
+      "sha256": "22d60ffc91cec7b1d124abf1959249b5f4308c1f9060f8ca175125ffbd2af32e",
+      "function": "User Security Profile Management",
+      "plans": [
+        "atx-business",
+        "atx-module",
+        "atx-api"
+      ]
+    },
+    {
+      "path": ".atx/mfre/specs/UserSecurityProfileManagement/spec/UserSecurityProfileManagement/traceability.yaml",
+      "sha256": "60049d133ec00dc378afa6c9aea47af17ae353c846f77c1975aa16dee4fb1111",
+      "function": "User Security Profile Management",
+      "plans": [
+        "atx-module",
+        "atx-quality"
+      ]
+    }
+  ]
+}

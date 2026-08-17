@@ -1,0 +1,30 @@
+{
+  "name": "mainframe-modernization",
+  "owner": {
+    "name": "REPLACE_WITH_ORG"
+  },
+  "metadata": {
+    "description": "AWS Transform mainframe reverse engineering and application documentation skills.",
+    "version": "0.0.0-unreleased"
+  },
+  "plugins": [
+    {
+      "name": "atx-mainframe-suite",
+      "source": "./dist/claude-code",
+      "description": "Five skills that take a mainframe codebase through AWS Transform reverse engineering and produce a 31-document application knowledge base. Includes the nine-phase pipeline driver, coverage matrix, and evidence-grounded document generation with a determinism contract.",
+      "version": "0.0.0-unreleased",
+      "author": {
+        "name": "REPLACE_WITH_ORG"
+      },
+      "keywords": [
+        "mainframe",
+        "cobol",
+        "jcl",
+        "aws-transform",
+        "modernization",
+        "reverse-engineering",
+        "documentation"
+      ]
+    }
+  ]
+}

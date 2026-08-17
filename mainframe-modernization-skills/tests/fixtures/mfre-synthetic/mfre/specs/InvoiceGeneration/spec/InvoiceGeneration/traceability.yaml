@@ -1,0 +1,54 @@
+function: InvoiceGeneration
+generated_at: '2020-01-01T00:02:00Z'
+summary:
+  total_rules: 5
+  captured: 5
+  not_applicable: 0
+  unreachable: 0
+  delegated: 0
+  not_accounted_for: 0
+  reconciliation:
+    expected: 5
+    written: 5
+    shortfall: 0
+rules:
+- rule_id: fixture_rule_0001
+  program: SYNBILL1
+  disposition: captured
+  rule_name: Select only posted billing events
+  rule_text: 'WHEN the invoice cycle reads a billing event, THE Invoice Builder SHALL
+    select the event only if its posted indicator is set.'
+  requirements:
+  - REQ-F-001
+- rule_id: fixture_rule_0002
+  program: SYNBILL1
+  disposition: captured
+  rule_name: Reject indeterminate posted indicator
+  rule_text: 'IF a billing event posted indicator is neither set nor clear, THEN THE
+    Invoice Builder SHALL write the event to the exception report and continue.'
+  requirements:
+  - REQ-F-002
+- rule_id: fixture_rule_0003
+  program: SYNBILL1
+  disposition: captured
+  rule_name: Suppress selection while cycle closed
+  rule_text: 'WHILE the cycle-open flag is clear, THE Invoice Builder SHALL select
+    no billing events.'
+  requirements:
+  - REQ-F-003
+- rule_id: fixture_rule_0004
+  program: SYNBILL2
+  disposition: captured
+  rule_name: Accumulate net amount into invoice total
+  rule_text: 'THE Invoice Totaller SHALL add the net amount of each selected event
+    to the account invoice total.'
+  requirements:
+  - REQ-F-004
+- rule_id: fixture_rule_0005
+  program: SYNBILL2
+  disposition: captured
+  rule_name: Abort on invoice total overflow
+  rule_text: 'IF the accumulated invoice total exceeds the invoice amount field capacity,
+    THEN THE Invoice Totaller SHALL abort the cycle with a size-error condition.'
+  requirements:
+  - REQ-F-005

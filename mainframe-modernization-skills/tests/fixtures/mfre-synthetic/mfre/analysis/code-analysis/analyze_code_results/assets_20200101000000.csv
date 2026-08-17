@@ -1,0 +1,7 @@
+Name,Path,File type,Cyclomatic Complexity,Total lines,Empty Lines,Effective Lines,Comment Lines
+SYNBILL1,app/billing/SYNBILL1.cbl,COBOL,7,240,20,190,30
+SYNBILL2,app/billing/SYNBILL2.cbl,COBOL,4,180,14,146,20
+SYNPAY1,app/billing/SYNPAY1.cbl,COBOL,5,200,16,164,20
+SYNINVJ1,app/billing/SYNINVJ1.jcl,JCL,1,40,4,34,2
+SYNPAYMP,app/bms/SYNPAYMP.bms,BMS,0,60,6,50,4
+SYNACCT,app/billing/SYNACCT.cpy,COPYBOOK,0,30,2,26,2

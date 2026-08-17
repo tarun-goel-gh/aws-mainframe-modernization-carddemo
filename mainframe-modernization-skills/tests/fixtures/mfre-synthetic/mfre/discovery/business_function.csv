@@ -1,0 +1,6 @@
+Name of business function,Business descriptions,Number of data paths,Number of entry points,Total LOC,Number of potential missing files,List of entry points
+Invoice Generation,Produces customer invoices from posted billing events and writes the invoice extract.,4,2,620,0,SYNINVJ1 (jcl); SYNBILL1 (program)
+Payment Posting,Accepts a payment against an account and posts it to the balance file.,3,1,410,0,SYNP (cics_transaction)
+Statement Archival,Copies finalised statements to the archive dataset and prunes the working file.,2,1,180,1,SYNARCJ1 (jcl)
+Build and Release Tooling,"Compile, link-edit and load-module promotion utilities.",1,3,88,0,SYNCMPJ1 (jcl); SYNLNKJ1 (jcl); SYNPRMJ1 (jcl)
+Dormant Account Sweep,Identifies dormant accounts. Discovered but never selected for extraction.,1,1,140,0,SYNDRMJ1 (jcl)

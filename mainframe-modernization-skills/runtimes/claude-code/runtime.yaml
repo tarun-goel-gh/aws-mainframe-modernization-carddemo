@@ -1,0 +1,65 @@
+# Claude Code runtime recipe.
+#
+# Claude Code follows the open Agent Skills standard, so the folder layout carries over unchanged and
+# only the front matter and paths need work.
+
+runtime: claude-code
+display_name: Claude Code
+
+install:
+  project_scope: .claude/skills
+  user_scope: ~/.claude/skills
+
+tokens:
+  SKILLS_ROOT: .claude/skills
+
+frontmatter:
+  keep:
+    - name
+    - description
+    - license
+    - metadata
+  drop:
+    # Not part of the standard. `compatibility` carries the prerequisite gate, so the build folds its
+    # substance into `description` rather than discarding it — losing it silently lets the agent start
+    # a run that cannot succeed.
+    - compatibility
+    - metadata.argument-hint
+    - metadata.delegates-to
+  add:
+    # Per-skill tool grants. atx-docs-status is read-only by contract; the two AWS-facing skills need
+    # Bash for the CLI.
+    allowed-tools:
+      mainframe-reverse-engineering: "Read, Write, Edit, Bash, Glob, Grep"
+      atx-app-documentation: "Read, Write, Edit, Bash, Glob, Grep"
+      atx-pipeline: "Read, Write, Edit, Bash, Glob, Grep"
+      atx-generate-docs: "Read, Write, Edit, Bash, Glob, Grep"
+      atx-docs-status: "Read, Glob, Grep"
+
+fragments:
+  mcp-setup: fragments/mcp-setup.md
+
+mcp:
+  provisioning: config-file
+  server_name: aws-transform
+  ships_config: true
+  # Copied to the target repository root, not into the skills directory.
+  config_source: mcp/.mcp.json
+  config_dest: .mcp.json
+  prerequisites:
+    - uvx
+    - awslabs.aws-transform-mcp-server
+
+project_instructions:
+  file: CLAUDE.md
+  snippet: ../../templates/CLAUDE.md.snippet
+  # Appended, never overwritten — a project's CLAUDE.md is the user's file.
+  mode: append
+
+marketplace:
+  plugin_name: atx-mainframe-suite
+  manifest: ../../.claude-plugin/marketplace.json
+
+prose_tokens:
+  RUNTIME_NAME: Claude Code
+  MCP_PREREQUISITE: "the AWS Transform MCP server declared in `.mcp.json`"

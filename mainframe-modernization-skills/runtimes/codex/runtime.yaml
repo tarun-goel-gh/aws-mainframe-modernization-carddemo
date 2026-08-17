@@ -1,0 +1,63 @@
+# Codex runtime recipe.
+#
+# Codex also follows the open Agent Skills standard. Its older custom-prompts mechanism is deprecated
+# in favour of skills, so skills are the target. Community reports indicate .codex/commands/ is not
+# supported — do not build the invocation layer around it.
+
+runtime: codex
+display_name: Codex
+
+install:
+  project_scope: .codex/skills
+  user_scope: ~/.codex/skills
+
+tokens:
+  SKILLS_ROOT: .codex/skills
+
+frontmatter:
+  keep:
+    - name
+    - description
+    - license
+    - metadata
+  drop:
+    - compatibility
+    - metadata.argument-hint
+    - metadata.delegates-to
+  add: {}
+  # No per-skill tool grants: Codex governs capability through sandbox and approval settings in
+  # config.toml rather than in the skill.
+
+fragments:
+  mcp-setup: fragments/mcp-setup.md
+
+mcp:
+  provisioning: config-file
+  server_name: aws-transform
+  ships_config: true
+  # A fragment, not a whole file: config.toml holds unrelated user settings and must be merged into,
+  # never replaced.
+  config_source: mcp/config.toml.fragment
+  config_dest: .codex/config.toml
+  config_mode: merge-section
+  prerequisites:
+    - uvx
+    - awslabs.aws-transform-mcp-server
+
+project_instructions:
+  file: AGENTS.md
+  snippet: ../../templates/AGENTS.md.snippet
+  mode: append
+
+sandbox:
+  # Recorded because it is the likeliest cause of a failed port. Phases 1-4 and 9 shell out to the AWS
+  # CLI, which needs network egress and reads ~/.aws — outside the workspace root. A fully sandboxed
+  # profile blocks them. Phases 5-8 need neither and run under any profile.
+  requires_network: true
+  requires_outside_workspace:
+    - ~/.aws
+  offline_phases: [coverage, evidence, generate, package]
+
+prose_tokens:
+  RUNTIME_NAME: Codex
+  MCP_PREREQUISITE: "the AWS Transform MCP server declared in `config.toml`"

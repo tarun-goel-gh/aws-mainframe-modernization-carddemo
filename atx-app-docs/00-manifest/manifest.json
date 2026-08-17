@@ -1,0 +1,757 @@
+{
+ "generatedAt": "2026-08-14T09:52:35Z",
+ "docsRoot": "atx-app-docs",
+ "upstream": {
+  "runId": "mfre-20260813-0550",
+  "job": "MainframeModernization-2026-08-06-0804",
+  "workspace": "Mainframe-Modernization",
+  "account": "057981664973",
+  "region": "us-east-1",
+  "sourceOrigin": "s3://ace-modernization-demo/aws-mainframe-modernization-carddemo-main.zip",
+  "fileCounts": {
+   "cobol": 44,
+   "copybooks": 62,
+   "jcl": 55,
+   "bms": 21,
+   "cics": 4,
+   "db2": 9,
+   "ims": 8,
+   "asm": 2,
+   "scheduler": 1
+  },
+  "glossaryProvenance": "absent",
+  "gates": {
+   "G0": "pass",
+   "G1": "pass_inherited",
+   "G2": "pass",
+   "G3": "pass",
+   "G4": "pass_with_gaps"
+  },
+  "scope": [
+   "Master Data File Initialization",
+   "Account Balance and Transaction Processing",
+   "Transaction Reporting and Statement Generation",
+   "Customer and Account Data Export and Import",
+   "Credit Card Record Management",
+   "Online Transaction Entry",
+   "Transaction Type Reference Data Maintenance",
+   "User Security Profile Management",
+   "Payment Authorization Processing and Fraud Review"
+  ],
+  "excluded": [
+   {
+    "name": "Application Build and Deployment",
+    "signals": [
+     "build/compile toolchain referenced in description (compile, assemble, link-edit, load module)",
+     "very low LOC density (256 LOC across 5 entry points) \u2014 thin wrappers around utilities"
+    ]
+   },
+   {
+    "name": "System Administration and Infrastructure Setup",
+    "signals": [
+     "environment administration (CICS resource definition, DB2 DDL, RACF)",
+     "operational plumbing (file open/close, FTP, job submission, wait steps)",
+     "description describes system tasks rather than a business outcome"
+    ]
+   }
+  ],
+  "sharedEntryPoints": [
+   {
+    "entryPoint": "CARDFILE (jcl)",
+    "functions": [
+     "Master Data File Initialization",
+     "System Administration and Infrastructure Setup"
+    ]
+   },
+   {
+    "entryPoint": "CTLI (cics_transaction)",
+    "functions": [
+     "Transaction Type Reference Data Maintenance",
+     "System Administration and Infrastructure Setup"
+    ]
+   },
+   {
+    "entryPoint": "CTTU (cics_transaction)",
+    "functions": [
+     "Transaction Type Reference Data Maintenance",
+     "System Administration and Infrastructure Setup"
+    ]
+   },
+   {
+    "entryPoint": "CUSTFILE (jcl)",
+    "functions": [
+     "Master Data File Initialization",
+     "System Administration and Infrastructure Setup"
+    ]
+   },
+   {
+    "entryPoint": "TRANFILE (jcl)",
+    "functions": [
+     "Master Data File Initialization",
+     "System Administration and Infrastructure Setup"
+    ]
+   }
+  ]
+ },
+ "coverage": {
+  "discovered": 11,
+  "delivered": 6,
+  "represented": [
+   "Account Balance and Transaction Processing",
+   "Credit Card Record Management",
+   "Customer and Account Data Export and Import",
+   "Payment Authorization Processing and Fraud Review",
+   "Transaction Type Reference Data Maintenance",
+   "User Security Profile Management"
+  ],
+  "scopedNoSpec": [
+   "Master Data File Initialization",
+   "Online Transaction Entry",
+   "Transaction Reporting and Statement Generation"
+  ],
+  "excludedInfrastructure": [
+   "Application Build and Deployment",
+   "System Administration and Infrastructure Setup"
+  ]
+ },
+ "documents": {
+  "total": 31,
+  "byStatus": {
+   "partial": 25,
+   "complete": 4,
+   "unavailable": 2
+  },
+  "sectionsGrounded": 111,
+  "sectionsEvidenceAbsent": 90,
+  "sectionsNotExtractedByThisRun": 0,
+  "groundedShare": 0.552
+ },
+ "evidence": {
+  "assetsWithComplexity": 88,
+  "assetCount": 314,
+  "dependencyNodes": 603,
+  "dependencyEdges": 1290,
+  "missingReferences": 108,
+  "duplicateProgramIds": 0,
+  "codebaseIssues": [
+   [
+    "Missing control card detected",
+    10
+   ],
+   [
+    "Missing dependency detected",
+    23
+   ],
+   [
+    "Missing program detected",
+    1
+   ],
+   [
+    "Unknown file type detected",
+    28
+   ],
+   [
+    "Unsupported system utility call detected",
+    25
+   ]
+  ],
+  "dataDictionaryFiles": 110,
+  "dataLineageFiles": 6,
+  "schedulerArtifacts": [
+   "CardDemo.ca7.json",
+   "CardDemo.controlm.json"
+  ]
+ },
+ "notApplicableReasons": [
+  "no static-scan, CVE or ISO 5055 output in AWS Transform",
+  "no stakeholder, ownership or organisational data",
+  "no runtime telemetry, SLA or monitoring feeds",
+  "no cost or licensing data",
+  "target-state design is forward engineering, out of scope",
+  "paragraph and variable structure requires tools absent from this evidence set"
+ ],
+ "documentList": [
+  {
+   "n": 1,
+   "lvl": 0,
+   "pt": "application_inventory",
+   "plan": "atx-discovery",
+   "out": "L0-discovery/application-inventory.md",
+   "grounded": 12,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "A-output-structure",
+   "artifacts": 13,
+   "builders": {
+    "run_ctx": 1,
+    "src_inv": 1,
+    "architecture": 3,
+    "deps": 1,
+    "inventory": 3,
+    "complexity": 2,
+    "jcl_control": 1
+   }
+  },
+  {
+   "n": 2,
+   "lvl": 0,
+   "pt": "as_is_assessment",
+   "plan": "atx-quality",
+   "out": "L0-discovery/as-is-assessment.md",
+   "grounded": 7,
+   "naAtx": 7,
+   "naRun": 0,
+   "status": "partial",
+   "family": "A-output-structure",
+   "artifacts": 13,
+   "builders": {
+    "run_ctx": 2,
+    "src_inv": 1,
+    "complexity": 1,
+    "architecture": 2,
+    "jcl_control": 1
+   }
+  },
+  {
+   "n": 3,
+   "lvl": 1,
+   "pt": "executive_summary",
+   "plan": "atx-discovery",
+   "out": "L1-business-context/executive-summary.md",
+   "grounded": 2,
+   "naAtx": 9,
+   "naRun": 0,
+   "status": "partial",
+   "family": "A-output-structure",
+   "artifacts": 2,
+   "builders": {
+    "run_ctx": 2
+   }
+  },
+  {
+   "n": 4,
+   "lvl": 1,
+   "pt": "stakeholder_analysis",
+   "plan": "atx-business",
+   "out": "L1-business-context/stakeholder-analysis.md",
+   "grounded": 1,
+   "naAtx": 1,
+   "naRun": 0,
+   "status": "partial",
+   "family": "A-output-structure",
+   "artifacts": 2,
+   "builders": {
+    "run_ctx": 1
+   }
+  },
+  {
+   "n": 5,
+   "lvl": 1,
+   "pt": "business_capabilities",
+   "plan": "atx-business",
+   "out": "L1-business-context/business-capabilities.md",
+   "grounded": 4,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "C-fixed",
+   "artifacts": 10,
+   "builders": {
+    "inventory": 1,
+    "fn_table": 2,
+    "oqs": 1
+   }
+  },
+  {
+   "n": 6,
+   "lvl": 1,
+   "pt": "business_features",
+   "plan": "atx-business",
+   "out": "L1-business-context/business-features.md",
+   "grounded": 4,
+   "naAtx": 1,
+   "naRun": 0,
+   "status": "partial",
+   "family": "C-fixed",
+   "artifacts": 10,
+   "builders": {
+    "inventory": 1,
+    "entrypoints": 1,
+    "deps": 1,
+    "oqs": 1
+   }
+  },
+  {
+   "n": 7,
+   "lvl": 2,
+   "pt": "business_requirements",
+   "plan": "atx-business",
+   "out": "L2-business-documentation/business-requirements.md",
+   "grounded": 7,
+   "naAtx": 0,
+   "naRun": 0,
+   "status": "complete",
+   "family": "B-bold",
+   "artifacts": 14,
+   "builders": {
+    "reqs": 4,
+    "workflows": 1,
+    "rules": 2
+   }
+  },
+  {
+   "n": 8,
+   "lvl": 2,
+   "pt": "user_stories",
+   "plan": "atx-business",
+   "out": "L2-business-documentation/user-stories.md",
+   "grounded": 4,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 8,
+   "builders": {
+    "reqs": 3,
+    "workflows": 1
+   }
+  },
+  {
+   "n": 9,
+   "lvl": 2,
+   "pt": "business_process",
+   "plan": "atx-business",
+   "out": "L2-business-documentation/business-process.md",
+   "grounded": 5,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 20,
+   "builders": {
+    "reqs": 1,
+    "workflows": 3,
+    "error_handling": 1
+   }
+  },
+  {
+   "n": 10,
+   "lvl": 2,
+   "pt": "feature_catalog",
+   "plan": "atx-business",
+   "out": "L2-business-documentation/feature-catalog.md",
+   "grounded": 4,
+   "naAtx": 4,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 16,
+   "builders": {
+    "reqs": 1,
+    "inventory": 1,
+    "fn_table": 1,
+    "rules": 1
+   }
+  },
+  {
+   "n": 11,
+   "lvl": 2,
+   "pt": "business_rules",
+   "plan": "atx-module",
+   "out": "L2-business-documentation/business-rules.md",
+   "grounded": 3,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 26,
+   "builders": {
+    "reqs": 1,
+    "rules": 1,
+    "error_handling": 1
+   }
+  },
+  {
+   "n": 12,
+   "lvl": 3,
+   "pt": "system_architecture",
+   "plan": "atx-structure",
+   "out": "L3-technical-documentation/system-architecture.md",
+   "grounded": 6,
+   "naAtx": 0,
+   "naRun": 0,
+   "status": "complete",
+   "family": "B-bold",
+   "artifacts": 4,
+   "builders": {
+    "architecture": 6
+   }
+  },
+  {
+   "n": 13,
+   "lvl": 3,
+   "pt": "technical_specs",
+   "plan": "atx-module",
+   "out": "L3-technical-documentation/technical-specs.md",
+   "grounded": 4,
+   "naAtx": 1,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 12,
+   "builders": {
+    "src_inv": 1,
+    "architecture": 1,
+    "entrypoints": 1,
+    "jcl_control": 1
+   }
+  },
+  {
+   "n": 14,
+   "lvl": 3,
+   "pt": "code_structure",
+   "plan": "atx-module",
+   "out": "L3-technical-documentation/code-structure.md",
+   "grounded": 2,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 4,
+   "builders": {
+    "run_ctx": 1,
+    "architecture": 1
+   }
+  },
+  {
+   "n": 15,
+   "lvl": 3,
+   "pt": "build_deployment",
+   "plan": "atx-operations",
+   "out": "L3-technical-documentation/build-deployment.md",
+   "grounded": 4,
+   "naAtx": 1,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 20,
+   "builders": {
+    "workflows": 1,
+    "build_jcl": 2,
+    "jcl_control": 1
+   }
+  },
+  {
+   "n": 16,
+   "lvl": 4,
+   "pt": "architecture_decisions",
+   "plan": "atx-structure",
+   "out": "L4-design/architecture-decisions.md",
+   "grounded": 3,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "C-fixed",
+   "artifacts": 8,
+   "builders": {
+    "run_ctx": 1,
+    "workflows": 1,
+    "oqs": 1
+   }
+  },
+  {
+   "n": 17,
+   "lvl": 4,
+   "pt": "component_design",
+   "plan": "atx-module",
+   "out": "L4-design/component-design.md",
+   "grounded": 3,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 16,
+   "builders": {
+    "architecture": 1,
+    "entrypoints": 1,
+    "error_handling": 1
+   }
+  },
+  {
+   "n": 18,
+   "lvl": 4,
+   "pt": "security_architecture",
+   "plan": "atx-quality",
+   "out": "L4-design/security-architecture.md",
+   "grounded": 0,
+   "naAtx": 5,
+   "naRun": 0,
+   "status": "unavailable",
+   "family": "B-bold",
+   "artifacts": 2,
+   "builders": {}
+  },
+  {
+   "n": 19,
+   "lvl": 5,
+   "pt": "data_dictionary",
+   "plan": "atx-data",
+   "out": "L5-data/data-dictionary.md",
+   "grounded": 3,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 4,
+   "builders": {
+    "datadict": 2,
+    "interfaces": 1
+   }
+  },
+  {
+   "n": 20,
+   "lvl": 5,
+   "pt": "database_schema_full",
+   "plan": "atx-data",
+   "out": "L5-data/database-schema-full.md",
+   "grounded": 3,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 4,
+   "builders": {
+    "datadict": 2,
+    "interfaces": 1
+   }
+  },
+  {
+   "n": 21,
+   "lvl": 5,
+   "pt": "data_lineage",
+   "plan": "atx-data",
+   "out": "L5-data/data-lineage.md",
+   "grounded": 3,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 4,
+   "builders": {
+    "inventory": 1,
+    "lineage": 2
+   }
+  },
+  {
+   "n": 22,
+   "lvl": 6,
+   "pt": "integration_architecture",
+   "plan": "atx-integration",
+   "out": "L6-integration/integration-architecture.md",
+   "grounded": 5,
+   "naAtx": 0,
+   "naRun": 0,
+   "status": "complete",
+   "family": "B-bold",
+   "artifacts": 24,
+   "builders": {
+    "architecture": 2,
+    "lineage": 1,
+    "error_handling": 1,
+    "jcl_control": 1
+   }
+  },
+  {
+   "n": 23,
+   "lvl": 6,
+   "pt": "api_documentation",
+   "plan": "atx-api",
+   "out": "L6-integration/api-documentation.md",
+   "grounded": 3,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 14,
+   "builders": {
+    "entrypoints": 2,
+    "error_handling": 1
+   }
+  },
+  {
+   "n": 24,
+   "lvl": 6,
+   "pt": "message_specs",
+   "plan": "atx-integration",
+   "out": "L6-integration/message-specs.md",
+   "grounded": 5,
+   "naAtx": 0,
+   "naRun": 0,
+   "status": "complete",
+   "family": "B-bold",
+   "artifacts": 30,
+   "builders": {
+    "bms_maps": 1,
+    "datadict": 1,
+    "rules": 1,
+    "workflows": 1,
+    "error_handling": 1
+   }
+  },
+  {
+   "n": 25,
+   "lvl": 7,
+   "pt": "operations_manual",
+   "plan": "atx-operations",
+   "out": "L7-operations/operations-manual.md",
+   "grounded": 4,
+   "naAtx": 2,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 20,
+   "builders": {
+    "run_ctx": 1,
+    "jcl_control": 2,
+    "jcl_ops": 1
+   }
+  },
+  {
+   "n": 26,
+   "lvl": 7,
+   "pt": "monitoring_alerting",
+   "plan": "atx-operations",
+   "out": "L7-operations/monitoring-alerting.md",
+   "grounded": 2,
+   "naAtx": 4,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 9,
+   "builders": {
+    "jcl_control": 2
+   }
+  },
+  {
+   "n": 27,
+   "lvl": 7,
+   "pt": "disaster_recovery",
+   "plan": "atx-operations",
+   "out": "L7-operations/disaster-recovery.md",
+   "grounded": 3,
+   "naAtx": 3,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 9,
+   "builders": {
+    "jcl_control": 3
+   }
+  },
+  {
+   "n": 28,
+   "lvl": 8,
+   "pt": "modernization_strategy",
+   "plan": "atx-structure",
+   "out": "L8-modernization/modernization-strategy.md",
+   "grounded": 0,
+   "naAtx": 6,
+   "naRun": 0,
+   "status": "unavailable",
+   "family": "B-bold",
+   "artifacts": 2,
+   "builders": {}
+  },
+  {
+   "n": 29,
+   "lvl": 8,
+   "pt": "target_architecture",
+   "plan": "atx-structure",
+   "out": "L8-modernization/target-architecture.md",
+   "grounded": 2,
+   "naAtx": 5,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 5,
+   "builders": {
+    "src_inv": 1,
+    "architecture": 1
+   }
+  },
+  {
+   "n": 30,
+   "lvl": 8,
+   "pt": "gap_analysis",
+   "plan": "atx-structure",
+   "out": "L8-modernization/gap-analysis.md",
+   "grounded": 2,
+   "naAtx": 4,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 9,
+   "builders": {
+    "oqs": 1,
+    "complexity": 1
+   }
+  },
+  {
+   "n": 31,
+   "lvl": 8,
+   "pt": "migration_roadmap",
+   "plan": "atx-structure",
+   "out": "L8-modernization/migration-roadmap.md",
+   "grounded": 1,
+   "naAtx": 7,
+   "naRun": 0,
+   "status": "partial",
+   "family": "B-bold",
+   "artifacts": 3,
+   "builders": {
+    "deps": 1
+   }
+  }
+ ],
+ "selfCheck": {
+  "enforced": true,
+  "documentsBlocked": 0,
+  "rules": [
+   "coverage note present",
+   "denominator present",
+   "no dropped heading",
+   "evidence index present",
+   "no Bob vocabulary",
+   "artifact recorded",
+   "no count without denominator",
+   "no builder dominance outside the plan"
+  ]
+ },
+ "artifactsPerDocument": {
+  "min": 2,
+  "max": 15
+ },
+ "builderDistribution": {
+  "architecture": 17,
+  "jcl_control": 12,
+  "reqs": 10,
+  "run_ctx": 9,
+  "workflows": 8,
+  "inventory": 7,
+  "error_handling": 6,
+  "entrypoints": 5,
+  "rules": 5,
+  "datadict": 5,
+  "src_inv": 4,
+  "complexity": 4,
+  "oqs": 4,
+  "deps": 3,
+  "fn_table": 3,
+  "lineage": 3,
+  "build_jcl": 2,
+  "interfaces": 2,
+  "bms_maps": 1,
+  "jcl_ops": 1
+ }
+}

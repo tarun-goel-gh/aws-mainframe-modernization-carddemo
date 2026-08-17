@@ -1,0 +1,72 @@
+{
+  "generated_at": "2020-01-01T00:01:00Z",
+  "functions": [
+    {
+      "name": "Invoice Generation",
+      "slug": "InvoiceGeneration",
+      "category": "batch",
+      "description": "Produces customer invoices from posted billing events and writes the invoice extract.",
+      "dataPaths": 4,
+      "entryPoints": 2,
+      "loc": 620,
+      "missingFiles": 0,
+      "interfaces": [
+        {
+          "target": "Payment Posting",
+          "via": "SYNBAL.VSAM",
+          "direction": "reads"
+        }
+      ]
+    },
+    {
+      "name": "Payment Posting",
+      "slug": "PaymentPosting",
+      "category": "online",
+      "description": "Accepts a payment against an account and posts it to the balance file.",
+      "dataPaths": 3,
+      "entryPoints": 1,
+      "loc": 410,
+      "missingFiles": 0,
+      "interfaces": [
+        {
+          "target": "Invoice Generation",
+          "via": "SYNBAL.VSAM",
+          "direction": "writes"
+        }
+      ]
+    },
+    {
+      "name": "Statement Archival",
+      "slug": "StatementArchival",
+      "category": "batch",
+      "description": "Copies finalised statements to the archive dataset and prunes the working file.",
+      "dataPaths": 2,
+      "entryPoints": 1,
+      "loc": 180,
+      "missingFiles": 1,
+      "interfaces": []
+    },
+    {
+      "name": "Build and Release Tooling",
+      "slug": "BuildAndReleaseTooling",
+      "category": "batch",
+      "description": "Compile, link-edit and load-module promotion utilities.",
+      "dataPaths": 1,
+      "entryPoints": 3,
+      "loc": 88,
+      "missingFiles": 0,
+      "interfaces": []
+    },
+    {
+      "name": "Dormant Account Sweep",
+      "slug": "DormantAccountSweep",
+      "category": "batch",
+      "description": "Identifies dormant accounts. Discovered but never selected for extraction.",
+      "dataPaths": 1,
+      "entryPoints": 1,
+      "loc": 140,
+      "missingFiles": 0,
+      "interfaces": []
+    }
+  ]
+}

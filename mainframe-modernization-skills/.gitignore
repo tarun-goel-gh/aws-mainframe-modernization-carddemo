@@ -1,0 +1,22 @@
+# Python residue from running the skill scripts
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Local runs. Skills write everything under .atx/ and none of it belongs in this repo —
+# run output carries account ids, bucket names and customer program names.
+.atx/
+
+# Release staging
+*.tar.gz
+*.zip
+SHA256SUMS
+
+# Editor
+.idea/
+.vscode/
+
+# NOTE: dist/ is deliberately NOT ignored. The generated variants are committed so users can
+# download a runtime's tree directly, and CI verifies they match a fresh build.

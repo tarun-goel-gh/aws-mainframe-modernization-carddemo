@@ -1,0 +1,6 @@
+data_source_name,field_name,field_type,mainframe_data_type,generic_data_type,level,data_length,business_definition,logical_group,display_format,display_length,decimal_positions,signed_indicator,usage_clause,occurs_min,occurs_max,occurs_depending,redefines_field,root_record,field_position,synchronized,justified,blank_when_zero,value_clause,condition_values,condition_ranges,is_inline
+SYNACCT.cpy,SYN-ACCT-RECORD,GROUP,,,01,68,Account master record,account,,68,,,,,,,,SYN-ACCT-RECORD,1,,,,,,,false
+SYNACCT.cpy,SYN-ACCT-ID,ALPHANUMERIC,PIC X(11),string,05,11,Account identifier,account,,11,,,DISPLAY,,,,,SYN-ACCT-RECORD,1,,,,,,,false
+SYNACCT.cpy,SYN-ACCT-STATUS,ALPHANUMERIC,PIC X(01),string,05,1,Account status code,account,,1,,,DISPLAY,,,,,SYN-ACCT-RECORD,12,,,,,,,false
+SYNACCT.cpy,SYN-ACCT-BALANCE,NUMERIC,PIC S9(10)V99,decimal,05,12,Outstanding balance,balance,,13,2,S,COMP-3,,,,,SYN-ACCT-RECORD,13,,,,,,,false
+SYNACCT.cpy,SYN-ACCT-CYCLE-FLAG,ALPHANUMERIC,PIC X(01),string,05,1,Cycle-open indicator,control,,1,,,DISPLAY,,,,,SYN-ACCT-RECORD,25,,,,,,,false

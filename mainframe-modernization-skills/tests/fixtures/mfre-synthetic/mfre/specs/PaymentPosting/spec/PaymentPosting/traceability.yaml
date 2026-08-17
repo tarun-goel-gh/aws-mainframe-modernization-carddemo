@@ -1,0 +1,46 @@
+function: PaymentPosting
+generated_at: '2020-01-01T00:03:00Z'
+summary:
+  total_rules: 4
+  captured: 3
+  not_applicable: 1
+  unreachable: 0
+  delegated: 0
+  not_accounted_for: 0
+  reconciliation:
+    expected: 4
+    written: 4
+    shortfall: 0
+rules:
+- rule_id: fixture_rule_1001
+  program: SYNPAY1
+  disposition: captured
+  rule_name: Validate payment amount
+  rule_text: 'WHEN a payment is submitted, THE Payment Validator SHALL accept the amount
+    only if it is numeric and greater than zero.'
+  requirements:
+  - REQ-F-001
+- rule_id: fixture_rule_1002
+  program: SYNPAY1
+  disposition: captured
+  rule_name: Reject unknown account
+  rule_text: 'IF the account key is absent from the balance file, THEN THE Payment
+    Validator SHALL reject the payment without altering any record.'
+  requirements:
+  - REQ-F-002
+- rule_id: fixture_rule_1003
+  program: SYNPAY1
+  disposition: captured
+  rule_name: Reduce outstanding balance
+  rule_text: 'THE Balance Updater SHALL subtract the posted payment amount from the
+    account outstanding balance.'
+  requirements:
+  - REQ-F-003
+- rule_id: fixture_rule_1004
+  program: SYNPAY1
+  disposition: not_applicable
+  rule_name: Legacy dual-currency conversion
+  rule_text: 'THE Balance Updater SHALL convert the payment to the account settlement
+    currency.'
+  note: Dual-currency support was withdrawn; the paragraph is unreachable in the current
+    build.

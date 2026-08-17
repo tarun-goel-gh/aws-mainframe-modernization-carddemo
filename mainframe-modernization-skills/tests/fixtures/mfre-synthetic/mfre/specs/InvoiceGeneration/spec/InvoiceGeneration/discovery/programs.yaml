@@ -1,0 +1,12 @@
+function: InvoiceGeneration
+programs:
+- name: SYNBILL1
+  type: cobol
+  role: billing event selection
+- name: SYNBILL2
+  type: cobol
+  role: invoice totalling
+- name: SYNINVJ1
+  type: jcl
+  role: invoice cycle driver
+source: assessment_decomp
