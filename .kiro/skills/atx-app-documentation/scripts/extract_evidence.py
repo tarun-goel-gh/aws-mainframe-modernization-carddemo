@@ -262,7 +262,7 @@ dd = glob.glob(f"{M}/analysis/data-analysis/**/data_dictionary_output/**/*.csv",
 pack["dataDictionary"]["fileCount"] = len(dd)
 pack["dataDictionary"]["files"] = [os.path.basename(p) for p in sorted(dd)]
 if dd:
-    sample = sorted(dd)[0]
+    sample = os.path.normpath(sorted(dd)[0])
     with open(sample, newline="", encoding="utf-8", errors="replace") as fh:
         rd = list(csv.reader(fh))
     pack["dataDictionary"]["sampleFile"] = os.path.relpath(sample)
