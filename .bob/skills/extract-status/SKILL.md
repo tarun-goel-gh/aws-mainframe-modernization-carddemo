@@ -4,8 +4,10 @@ description: >-
   Report knowledge-extraction coverage from the ledger without running any
   extraction
 metadata:
+  version: 2.0.0
   user-invocable: true
   disable-model-invocation: true
+  argument-hint: '[path-to-bob-z-knowledge-extract]'
 ---
 
 Report the current state of the knowledge extraction. Do not run any extraction workflow, and do not
@@ -22,6 +24,6 @@ Locate `bob-z-knowledge-extract/` (at $1 if given, otherwise the open workspace 
    reconciliation defects, report them explicitly.
 4. Any ledger row marked `Y` whose corresponding artifact file is missing on disk.
 5. Every `notApplicable` and `outOfScope` area recorded in the manifest, with its reason.
-6. Whether the Step 9 Refactor question has been resolved in `00-manifest/extraction-log.md`.
+6. Whether the Step 12 Refactor question has been resolved in `00-manifest/extraction-log.md`.
 
 Never report a bare percentage without the named list.

@@ -4,8 +4,20 @@ Direct replacement for `CAST_TOOL_PLANS` in
 `cast-integration/src/cast_integration_service/prompts/grounding.py`.
 
 The service injected a named CAST MCP tool sequence into every prompt so the agent gathered
-evidence in a cheap, ordered, repeatable way. This file does the same job with **Z Premium
-Package workflows, Bob editor tools and read-only file tools**. No CAST MCP server is used.
+evidence in a cheap, ordered, repeatable way. This file does the same job with **BobZ v3 MCP
+server tools, plus read-only file tools**. No CAST MCP server is used.
+
+**Every capability below is directly callable — there is no UI session to invoke.** BobZ v3
+ships an MCP server that exposes Z Premium Package capabilities (and the editor tools) as normal
+tool calls: the agent calls the tool itself, on this turn, and gets a structured JSON result
+back. There is no "launch the workflow and wait for the IDE" step and no `start_subtask` detour —
+that two-tier path existed only because no MCP server did, and it is retired. Where a step below
+says "Generate documentation (architect perspective)", read it as the direct call
+`generate_documentation(programId, programPath, perspective=architect)`; "Explain code" is
+`explain_code(...)`; "Z Code Scan" is `z_code_scan(...)`; and so on for every capability in the
+inventory below. The exact tool names and argument shapes are the authoritative vocabulary in
+`.bob/skills/_design/bobz-v3-foundations.md` §1 — this file names *when* to call each one, that
+document names *how*.
 
 Run the plan named by the document's reference file. Run steps **in order**. Stop when the
 document's sections are satisfied.
@@ -16,20 +28,29 @@ document's sections are satisfied.
 
 | Capability | Kind | Requires Z Understand? |
 |---|---|---|
-| Generate documentation (architect / developer / business perspectives) | Z Premium workflow | No |
-| Generate data dictionary | Z Premium workflow | No |
-| Explain code | Z Premium workflow | No |
-| Z Code Scan (`zcodescan-check-list-of-local-programs`, `zcodescan-check-current-program`) | Z Premium workflow | No |
-| Refactor / Generate refactored service program | Z Premium workflow | Unverified |
-| `get_control_flow`, `get_paragraphs`, `get_variables`, `get_expanded_source`, `scan_program` | Editor tool | No |
-| `zopeneditor-cobol-get-program-control-flow`, `zopeneditor-cobol-get-data-flow` | Editor tool | No |
-| `read_file`, `list_files`, `glob`, `grep`, read-only `execute_command` | File tool | No |
-| `/init` (AGENTS.md), `/z-coding-standards-skill-builder` | Bob command | No |
-| `/impact-analysis`, `/implementation-planning`, `/sync-data-dictionary`, `get_project_*` | Bob command / tool | **Yes** |
+| `generate_documentation` (architect / developer / business perspectives) | BobZ MCP tool | No |
+| `generate_data_dictionary` | BobZ MCP tool | No |
+| `explain_code` | BobZ MCP tool | No |
+| `z_code_scan` (single program or batch) | BobZ MCP tool | No |
+| `refactor` / `generate_refactored_service` | BobZ MCP tool (reliability unverified with no Z Understand server) | Unverified |
+| `get_control_flow`, `get_paragraphs`, `get_variables`, `get_expanded_source`, `scan_program`, `edit_data_dictionary` | BobZ MCP tool | No |
+| `read_file`, `list_files`, `glob`, `grep`, read-only `execute_command` | File tool (local, not MCP) | No |
+| `/init` (AGENTS.md), `/z-coding-standards-skill-builder` | Bob command (local, not MCP) | No |
+| `get_project_inventory`, `get_project_tables`, `get_project_resource_usage`, `impact_analysis`, `implementation_planning`, `sync_data_dictionary` | BobZ MCP tool | **Yes** |
 
 Anything in the last row is **unavailable** without a configured Z Understand server. Do not
 approximate it — state the gap and mark the affected sections
-`Not available from Z Premium analysis`.
+`Not available from Z Premium analysis`. Every "BobZ MCP tool" row above is called directly by
+the agent per `.bob/skills/_design/bobz-v3-foundations.md` §1; the rows still marked
+"Bob command" / "File tool (local, not MCP)" are the capabilities that document does not promote
+into the MCP vocabulary — call them exactly as before.
+
+**Tool name correction (mirrors `cobol-knowledge-extraction/SKILL.md` F10):**
+`zopeneditor-cobol-get-program-control-flow` and `zopeneditor-cobol-get-data-flow` are **not
+valid tool names** and must never be called, in a plan step or otherwise. Use only
+`get_control_flow` and `get_paragraphs` from the promoted MCP tool vocabulary — `get_variables`
+already returns the WS/Linkage item detail (PIC, level, usage) that would otherwise be sought
+from a "data flow" call.
 
 ---
 
@@ -79,8 +100,7 @@ Architecture, layering and modernization framing. Call in this order:
 1. `z-discovery` results (reuse — do not re-run).
 2. Generate documentation (**architect** perspective) across the batch → subsystem and layer
    narrative.
-3. `get_control_flow` / `zopeneditor-cobol-get-program-control-flow` on each documented
-   program → intra-program structure.
+3. `get_control_flow` on each documented program → intra-program structure.
 4. `grep` for `CALL '`, `EXEC CICS LINK|XCTL|START`, `COPY ` → inter-program edges.
    Assemble the call graph from these plus step 2's narrative.
    Label it `narrative-per-program-not-tool-verified`.
@@ -102,7 +122,9 @@ Program-, paragraph- and rule-level depth. Call in this order:
 3. `get_variables` → working-storage and linkage items with PIC, level, usage.
 4. Generate documentation (**developer** perspective) → per-program behaviour narrative.
 5. Explain code → paragraph-level intent for the paragraphs the document details.
-6. `zopeneditor-cobol-get-data-flow` → variable lifecycle for the fields the document details.
+6. `get_variables` output already gathered in step 3 → variable lifecycle (declaration, PIC,
+   level, usage) for the fields the document details. There is no separate "data flow" MCP
+   tool; do not call `zopeneditor-cobol-get-data-flow` — it is not a valid tool name.
 7. `grep` for `IF `, `EVALUATE `, `WHEN `, `88 ` condition names → candidate business rules;
    quote the condition verbatim with `member:line`.
 
@@ -177,8 +199,10 @@ Every edge carries provenance. Dynamic `CALL identifier` edges are reported as
 
 Quality, risk and security. Call in this order:
 
-1. Z Code Scan across the batch (`zcodescan-check-list-of-local-programs`, or
-   `zcodescan-check-current-program` per member) → findings per program.
+1. `z_code_scan` across the batch (`programIds[]`/`programPaths[]`, `databasePath`), or per
+   program (`programId`, `programPath`, `databasePath`) → findings per program. The old fake
+   names `zcodescan-check-list-of-local-programs` and `zcodescan-check-current-program` do not
+   exist and must never be called.
 2. Roll complexity signals into a complexity metrics table; rank the batch by
    modernization risk.
 3. Explain code on the top 20% by complexity → why each is risky.

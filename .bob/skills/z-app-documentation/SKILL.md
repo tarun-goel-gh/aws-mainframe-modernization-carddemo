@@ -1,25 +1,97 @@
 ---
 name: z-app-documentation
-description: Use when generating the full application documentation suite for a mainframe application — the 31 documents across 9 levels (discovery, business context, business documentation, technical, design, data, integration, operations, modernization) — using only native Bob IDE + Z Premium Package workflows (Generate documentation, Generate data dictionary, Explain code, Z Code Scan). Produces a versioned bob-z-app-docs knowledge base with an evidence-grounded, resumable, ledger-tracked pipeline. Activate when the user asks to generate application documentation, produce a modernization document set, build an as-is assessment, document business rules or data lineage, generate an executive summary or migration roadmap, or mentions "bob-z-app-docs", "documentation suite", "9-level documentation", or "document ledger".
+description: Use when generating the full application documentation suite for a mainframe application — the 31 documents across 9 levels (discovery, business context, business documentation, technical, design, data, integration, operations, modernization) — using BobZ v3's MCP server (Z Premium Package capabilities as directly-callable tools) plus the source members in the workspace. Produces a versioned bob-z-app-docs knowledge base built by three deterministic scripts (build_coverage.py, extract_evidence.py, generate_docs.py) over an evidence-grounded, resumable, ledger-tracked pipeline. Activate when the user asks to generate application documentation, produce a modernization document set, build an as-is assessment, document business rules or data lineage, generate an executive summary or migration roadmap, or mentions "bob-z-app-docs", "documentation suite", "9-level documentation", or "document ledger".
+compatibility: Requires BobZ v3's MCP server reachable in the workspace (Advanced mode, Z Code or Z Architect). No CAST Imaging MCP server and no AWS Transform run are needed. A Z Understand server is optional — without it, the six `get_project_*`/`impact_analysis`/`implementation_planning`/`sync_data_dictionary` tools are unavailable and their sections read unavailable, never approximated.
 metadata:
-  version: 1.0.0
-  argument-hint: '[all|L0..L8|<prompt_type>] [path|inventory.csv|glob] [--dry-run]'
+  version: "2.0.0"
+  argument-hint: '[all|L0..L8|<prompt_type>] [path|inventory.csv|glob] [--dry-run] [--force]'
+  upstream: cobol-knowledge-extraction
 ---
 
 # Z Application Documentation Suite
 
 Generates a complete, evidence-grounded application documentation set — **31 documents across
-9 levels** — from a mainframe codebase, using only IBM-shipped Bob capabilities.
+9 levels** — from a mainframe codebase, using BobZ v3's MCP server and the source members in the
+workspace.
+
+**Version 2.0.0 is script-driven, not prose-driven.** Three scripts —
+`scripts/build_coverage.py`, `scripts/extract_evidence.py`, `scripts/generate_docs.py` — own the
+prerequisite gate, the evidence aggregation and the compose/self-check/file loop. The agent's job
+is to call the BobZ MCP tools per program per plan and hand the results to those scripts; it is
+not to author a document freehand. See "Hand-composition is not permitted" below for why that
+line is not negotiable.
 
 This skill is a port of the CAST integration service's documentation generator
 (`services/cast-integration`). The prompt catalog, grounding contract, determinism rules and
-evidence-plan mechanism are carried over 1:1. The **evidence source is different**: the
-service used a CAST Imaging MCP server; this skill uses the **Z Premium Package workflows and
-the source members in the workspace**. There is no CAST MCP dependency anywhere.
+evidence-plan mechanism are carried over 1:1. The **evidence source is different**: the service
+used a CAST Imaging MCP server; this skill uses the **BobZ MCP server tools named in
+`.bob/skills/_design/bobz-v3-foundations.md` §1**, plus read-only file tools over the workspace.
+There is no CAST MCP dependency anywhere.
 
-This skill adds **no documentation capability**. Bob's workflows are IBM-shipped; this skill
-sequences them, enforces grounding, caches evidence, files output, maintains the ledger, and
-reports honestly what could not run. It must never substitute a capability that is unavailable.
+Version 1.0.0 sequenced IBM-shipped UI workflows through a two-tier fallback because no
+MCP server existed. BobZ v3 ships one: every capability in §1 of the foundations document is now
+a normal tool call the agent makes itself, per program, per turn, with a structured JSON result.
+There is no more "UI-invoked workflow vs. autonomous fallback" split, and `doc_generated=P`
+(partial, fallback-authored) is retired along with the fallback it existed to label.
+
+---
+
+## Scope
+
+**In scope** — probing MCP reachability; calling BobZ MCP tools per program per evidence plan;
+reading workspace source read-only; running the three scripts to gate, aggregate and compose;
+maintaining the program inventory, document ledger and evidence indices; reporting gaps.
+
+**Out of scope** — modifying application source; modifying `bobz/DD.json` outside
+`edit_data_dictionary`; hand-composing a document instead of running `generate_docs.py`; any
+capability in `.bob/skills/_design/bobz-v3-foundations.md` §1b when `zUnderstandConfigured` is
+`false`.
+
+## Non-negotiable rules
+
+1. **No evidence, no document.** Every claim traces to an MCP tool result or a source read
+   obtained this run. Ungrounded fields read `Not available from Z Premium analysis`.
+2. **MCP reachability is a hard gate, and there is no fallback behind it.** If the BobZ MCP
+   server does not answer the reachability probe, this skill drops to PLAN mode. It does not
+   degrade to a narrative substitute — that path was retired in this version.
+3. **Templates are fixed.** Never add, drop or reorder a template's sections. Render every
+   heading, even when its content is unavailable. `references/template-families.md` says how to
+   read each template's section set.
+4. **Provenance on every derived artifact.** Rendered documents use
+   `references/grounding-contract.md`'s four-value vocabulary. The `evidence-pack.json` the
+   scripts build carries its own, narrower three-value vocabulary — `tool-verified`,
+   `narrative-per-program-not-tool-verified`, `z-understand-verified` — because MCP tool output
+   and a deterministic local read are no longer meaningfully different trust levels. Do not
+   blend the two vocabularies in either direction.
+5. **Resumable and idempotent.** A document already marked complete in `document-ledger.csv` is
+   skipped, not regenerated, unless `--force`.
+6. **Determinism.** Fixed ordering, verbatim identifiers, no synonym variety, no invented dates.
+   Two runs over unchanged evidence produce byte-identical documents.
+7. **Hand-composition is not permitted.** See below.
+8. **Source is read-only.** Writes are confined to `docsRoot`. The one exception is
+   `bobz/DD.json`, reachable only through `edit_data_dictionary` / `generate_data_dictionary`.
+
+### Hand-composition is not permitted
+
+**Run `scripts/generate_docs.py`. Do not write a document's markdown by hand, even to fix a
+gap you can see.** Hand-composition cannot satisfy this skill's own determinism rules: identical
+inputs must yield identical output, ordering must be stable, and every heading must come from the
+family the template actually belongs to rather than from a guess at what a heading "should" look
+like. Two guarantees a hand-written document cannot give you:
+
+- **The self-check blocks filing.** `generate_docs.py` runs the grounding contract's §5 checklist
+  before it writes a single byte, and a document that fails is **not filed** — it is reported and
+  the batch continues. A document you composed by hand and then eyeballed against the checklist
+  is an assertion of compliance, not compliance; the whole point of an enforced self-check is that
+  it does not trust the thing that just wrote the document to grade itself.
+- **`document-evidence.json`'s staleness fingerprints depend on the script actually having read
+  the evidence.** Every document's per-artifact fingerprint entry is written by the same code path
+  that composed the document, from the artifacts it actually opened this run. A hand-written
+  document has no such trail — either the fingerprint file lies about what was read, or it is
+  simply absent, and either way the next run cannot tell fresh evidence from stale.
+
+If a document is wrong, the fix is: correct the evidence in `mcp-cache/` or the source, re-run
+`extract_evidence.py`, then `generate_docs.py --force`. Never patch the rendered file directly.
 
 ---
 
@@ -27,13 +99,24 @@ reports honestly what could not run. It must never substitute a capability that 
 
 | File | Read when |
 |---|---|
-| `references/grounding-contract.md` | **Always**, before writing any document. Non-negotiable. |
-| `references/document-catalog.md` | Step 1 and Step 7 — the 31 documents, levels, plans and output paths. |
-| `references/evidence-plans.md` | Step 8, before running a document's evidence pass. |
-| `references/z-substitutions.md` | Step 8, whenever a template names a distributed-stack concept. |
-| `references/prompts/<n>-<prompt_type>.md` | Step 8, one per document being generated. |
+| `.bob/skills/_design/bobz-v3-foundations.md` | Always, before the preflight probe — it is the authoritative MCP tool vocabulary, script contracts and schemas this skill runs against. |
+| `references/grounding-contract.md` | Always, before composing or reviewing any document. Non-negotiable. |
+| `references/document-catalog.md` | Step 1 and the generation step — the 31 documents, levels, plans and output paths. |
+| `references/evidence-plans.md` | Before gathering evidence for a document — which MCP tools to call, in what order. |
+| `references/template-families.md` | Before generating — how each template's section set is expressed and extracted. |
+| `references/z-substitutions.md` | Whenever a template names a distributed-stack concept. |
+| `references/prompts/<n>-<prompt_type>.md` | One per document being generated. |
 
 Never load all 31 prompt files at once. Load the one you are generating.
+
+| Script | Purpose |
+|---|---|
+| `scripts/build_coverage.py` | Prerequisite gate — probe file, inventory, coverage matrix |
+| `scripts/extract_evidence.py` | Aggregate `mcp-cache/` (and any reused extraction tree) into `evidence-pack.json` |
+| `scripts/generate_docs.py` | Compose, self-check and file the documents against the ledger |
+
+No script in this suite ever calls the MCP server. Only the agent does, once per tool call, per
+turn — scripts are deterministic local file I/O, verification and reporting.
 
 ---
 
@@ -41,8 +124,8 @@ Never load all 31 prompt files at once. Load the one you are generating.
 
 | Mode | When | Behavior |
 |---|---|---|
-| **PLAN** | User passes `--dry-run`, says "plan only", "what would you do", or any Step 2 preflight check fails | Produce the full plan, the manifest and the ledger preview; write **no** documents, change **no** ledger rows |
-| **EXECUTE** | Default — proceed autonomously as soon as preflight passes | Run the batch, write documents, update the ledger. Do not wait for confirmation. |
+| **PLAN** | User passes `--dry-run`, says "plan only", "what would you do", or the MCP reachability probe fails | Produce the scope table, capability map and coverage matrix; run no MCP tool calls beyond the one-shot probe; write no documents; change no ledger rows |
+| **EXECUTE** | Default — proceed autonomously as soon as preflight passes | Gather evidence, run the batch, write documents, update the ledger. Do not wait for confirmation. |
 
 Always state which mode you are in as the first line of your response.
 
@@ -50,12 +133,12 @@ Always state which mode you are in as the first line of your response.
 
 ## Approval posture
 
-**This skill is fully autonomous. No human approval is required at any point** — not for tool
-calls, not for skill activations, not for file writes under `docsRoot`, not for workflow
+**This skill is fully autonomous. No human approval is required at any point** — not for MCP
+tool calls, not for skill activations, not for file writes under `docsRoot`, not for script
 invocations.
 
-All approvals are declared upfront in Step 2 and are irrevocable for the session. There are no
-interactive gates and no per-step confirmation requests.
+All approvals are declared upfront and are irrevocable for the session. There are no interactive
+gates and no per-step confirmation requests.
 
 Two content gates survive. Both are **deferred review gates, not interactive prompts**:
 
@@ -68,6 +151,76 @@ Two content gates survive. Both are **deferred review gates, not interactive pro
 State `EXECUTE — auto-approved posture, content review deferred to queues` as the opening line
 of every EXECUTE run. The only revocation trigger is a user message containing the phrase
 **"pause for approval"**.
+
+Emit this block exactly once at the start of every EXECUTE run:
+
+```
+AUTO-APPROVAL DECLARATION
+=========================
+All of the following are pre-approved for the entirety of this documentation run.
+No further confirmation will be requested.
+
+FILE SYSTEM OPERATIONS
+  write_file / apply_diff / insert_content   — any file under docsRoot
+  list_files / read_file / glob / grep       — anywhere in the workspace
+  execute_command                            — read-only shell commands only
+
+BOBZ MCP TOOLS (v3 server — always available, §1a of the foundations doc)
+  generate_data_dictionary, generate_documentation, explain_code, z_code_scan,
+  get_variables, get_control_flow, get_paragraphs, scan_program,
+  get_expanded_source, edit_data_dictionary, refactor, generate_refactored_service
+
+BOBZ MCP TOOLS (v3 server — gated on zUnderstandConfigured, §1b)
+  get_project_inventory, get_project_tables, get_project_resource_usage,
+  impact_analysis, implementation_planning, sync_data_dictionary
+
+SCRIPTS
+  scripts/build_coverage.py, scripts/extract_evidence.py, scripts/generate_docs.py
+
+SUB-SKILL ACTIVATIONS
+  cobol-knowledge-extraction (for inventory/extraction reuse), docs-status, generate-docs
+
+LEDGER AND MANIFEST WRITES
+  document-ledger.csv, program-inventory.csv, documentation-manifest.json,
+  mcp-capability-probe.json, evidence-pack.json, generation-log.md, mcp-cache/, run-history/
+
+NO application source file is ever modified. Writes are confined to docsRoot, plus
+bobz/DD.json solely through generate_data_dictionary / edit_data_dictionary.
+Revoking this declaration requires the user to send: "pause for approval".
+```
+
+---
+
+## Step 0 — Preflight
+
+1. **Resolve/refresh the program inventory.** If `program-inventory.csv` does not exist yet for
+   this scope (in `bob-z-knowledge-extract/00-manifest/` or under this skill's `docsRoot`), run
+   `cobol-knowledge-extraction`'s `scripts/build_inventory.py` first. The reachability probe below
+   needs at least one real `programId`/`programPath` pair to call against.
+2. **MCP reachability probe.** Make one cheap, real tool call — `get_paragraphs` or
+   `get_control_flow` — against the first inventoried program. A response, including a
+   well-formed tool-level error about that specific program, proves the server is reachable. A
+   connection/transport failure or timeout proves it is not. Write
+   `00-manifest/mcp-capability-probe.json` (schema: `bobz-v3-foundations.md` §2c) recording
+   `mcpReachable`, `mcpProbeMethod`, `mcpProbeLatencyMs`, `mcpServerVersion` (or `"unknown"` —
+   never invented).
+3. **Active mode** — Z Code or Z Architect.
+4. **Advanced mode** — required for this skill to have activated at all.
+5. **Z Understand server** — read `<workspaceRoot>/.bobz/local-settings.json`; record
+   `zUnderstandConfigured: true|false`.
+6. **Local scanner metadata** — does `.bobz/expanded/` or a `ScannerOutput.db` already exist?
+7. **Existing state** — do `AGENTS.md`, `bobz/DD.json`, `bob-z-knowledge-extract/` or `docsRoot`
+   already exist? Never overwrite them blind. If `bob-z-knowledge-extract/` exists, plan to reuse
+   its artifacts as evidence (Step 3).
+
+**If step 2 fails: drop to PLAN mode immediately and report the exact transport/tool error.**
+There is no per-program narrative fallback in this version — an unreachable MCP server is a stop
+condition for EXECUTE mode, full stop.
+
+Derive the capability map from steps 3–5 exactly as `mcp-capability-probe.json`'s
+`capabilityMap` block requires (§1 of the foundations doc): every §1a tool `available`; §1b tools
+`unavailable` when `zUnderstandConfigured` is `false`; `refactor` and
+`generate_refactored_service` `unverified` until probed once this workspace.
 
 ---
 
@@ -88,14 +241,14 @@ Never assume the scope. Resolve two things: **which source** and **which documen
 Then resolve and **record**:
 
 1. **`workspaceRoot`** — the folder the IDE has open. If Bob artifacts (`.bob/`, `.bobz/`,
-   `bobz/`, `docs/explain/`) appear at more than one level of the path, stop and ask which
-   root to use. Do not guess — the ledger denominator depends on it.
+   `bobz/`, `docs/explain/`) appear at more than one level of the path, stop and ask which root
+   to use. Do not guess — the ledger denominator depends on it.
 2. **`docsRoot`** — `<workspaceRoot>/bob-z-app-docs`, unless the user names another.
-3. **`applicationName`** — the name the documents are titled with. Take it from, in order:
-   the user's words, `zapp.yaml`, the repository folder name. State which source you used.
-4. **`sourceRoots`** — discover them; do not expect any particular folder name. If
-   `zapp.yaml` or a `.zapp/` property group exists, read it: `libraries.locations` tells you
-   where copybooks resolve from and hints where source lives.
+3. **`applicationName`** — take it from, in order: the user's words, `zapp.yaml`, the repository
+   folder name. State which source you used.
+4. **`sourceRoots`** — discover them; do not expect any particular folder name. If `zapp.yaml`
+   or a `.zapp/` property group exists, read it: `libraries.locations` tells you where copybooks
+   resolve from.
 5. **`languagesPresent` / `languagesAbsent`** — classify by extension, case-insensitively:
    COBOL `.cbl .cob .cobol` · copybook `.cpy .copy` · PL/I `.pli .pl1` · include `.inc` ·
    JCL `.jcl .prc .proc` · REXX `.rex .rexx` · HLASM `.asm .hlasm .mlc` · CICS `.csd` ·
@@ -114,402 +267,156 @@ Read `references/document-catalog.md`. Resolve the document argument:
 | Several `prompt_type`s | Exactly those, generated in catalog order |
 
 Three documents are **feature-scoped** (`business_features`, `feature_catalog`,
-`business_rules`) — they need a `feature_name` and produce one file per feature. If no
-features are known yet, run `business_features` first; its output becomes the feature list.
+`business_rules`) — they need a `feature_name` and produce one file per feature. If no features
+are known yet, generate `business_features` first; its output becomes the feature list.
 
 State the resolved scope back as a short table, then continue immediately to Step 2.
 
 ---
 
-## Step 2 — Declare all approvals and check the environment
-
-### 2a — Upfront approval declaration
-
-Emit this block exactly once at the start of every EXECUTE run.
+## Step 2 — Run the coverage gate
 
 ```
-AUTO-APPROVAL DECLARATION
-=========================
-All of the following are pre-approved for the entirety of this documentation run.
-No further confirmation will be requested.
-
-FILE SYSTEM OPERATIONS
-  write_file        — create or overwrite any file under docsRoot
-  insert_content    — append to any file under docsRoot
-  apply_diff        — patch any file under docsRoot
-  list_files        — list any directory in the workspace
-  read_file         — read any file in the workspace
-  glob / grep       — search for files or content anywhere in the workspace
-  execute_command   — read-only shell commands (find, wc, stat, python3)
-                      for inventory sizing and JSON stamping only
-
-WORKFLOWS (IBM-shipped, Z Premium Package)
-  Generate documentation   (architect, developer, business perspectives)
-  Generate data dictionary
-  Explain code
-  Z Code Scan              (batch or per-file variant)
-
-EDITOR TOOLS
-  get_control_flow, get_paragraphs, get_variables, get_expanded_source, scan_program
-  zopeneditor-cobol-get-program-control-flow, zopeneditor-cobol-get-data-flow
-
-SUB-SKILL ACTIVATIONS
-  docgen-workflow, data-dictionary-workflow, explain-workflow
-
-LEDGER AND MANIFEST WRITES
-  document-ledger.csv, program-inventory.csv, documentation-manifest.json,
-  generation-log.md, evidence-cache/, run-history/
-
-NO application source file is ever modified. Writes are confined to docsRoot.
-Revoking this declaration requires the user to send: "pause for approval".
+scripts/build_coverage.py --workspace-root <workspaceRoot>
+                           [--extraction-root <bob-z-knowledge-extract>]
+                           --docs-root <docsRoot>
+                           [--probe-file <docsRoot>/00-manifest/mcp-capability-probe.json]
+                           [--out-dir <docsRoot>/00-manifest]
+                           [--json] [--check-only]
 ```
 
-### 2b — Preflight: probe the environment
+Exit `0`: prerequisites met, `coverage.md` and `evidence-index.json` written. Exit `1`: a hard
+prerequisite failed — **stop** (probe unreadable or `mcpReachable: false`; no
+`program-inventory.csv`; Advanced mode not `true` in the probe file). Exit `2`: bad usage.
 
-Probe every run and report as a table with an explicit value for each row:
+`coverage.md` classifies every program `reused-from-extraction` / `needs-evidence-pass` /
+`no-source-in-scope`. **Under `--dry-run`, stop here** and present it — this is the cheapest point
+to decide the run is not worth doing, or to fix the upstream extraction first.
 
-1. **Active mode** — Z Code or Z Architect.
-2. **Advanced mode** — required for this skill to have activated at all.
-3. **Z Understand server** — read `<workspaceRoot>/.bobz/local-settings.json`. A
-   `databaseLocation` pointing at a local `ScannerOutput.db` with no server URL = local-scanner
-   mode. Record `zUnderstandConfigured: true|false`.
-4. **Local scanner metadata** — does `.bobz/expanded/` or a `ScannerOutput.db` already exist?
-5. **Existing state** — do `AGENTS.md`, `bobz/DD.json`, `docs/explain/`,
-   `bob-z-knowledge-extract/` or `docsRoot` already exist? Never overwrite them blind.
-   If `bob-z-knowledge-extract/` exists, **reuse its artifacts as evidence** (see Step 5c) —
-   that tree was produced by the `cobol-knowledge-extraction` skill and is already grounded.
-
-Derive the capability map:
-
-| Capability | If `zUnderstandConfigured` is false |
-|---|---|
-| `/init`, Generate documentation, Generate data dictionary, Explain code, Z Code Scan, control-/data-flow tools | available |
-| `/impact-analysis`, `/implementation-planning`, `/sync-data-dictionary`, every `get_project_*` tool | **unavailable** — state plainly; never approximate |
-| ISO-5055 scoring, CVE mapping, portfolio quality roll-up | **unavailable in all configurations** — these came from CAST in the original service and have no Z Premium equivalent |
-
-**Preflight fails** — drop to PLAN mode — if the workspace root is ambiguous, no source files
-were found in scope, the named input does not exist, or the requested `prompt_type` is not in
-the catalog.
+Soft prerequisites degrade named plans rather than stopping: no `bob-z-knowledge-extract/` tree
+means every program's evidence pass starts cold; `zUnderstandConfigured: false` means
+`z-integration`/`z-structure` dependency data stays narrative.
 
 ---
 
-## Step 3 — Create the output tree
+## Step 3 — Gather evidence: the one step scripts do not do
 
-Idempotent: create what is missing, never overwrite or delete existing content.
+**This is the agent's step, not a script's.** For every program `build_coverage.py` classified
+`needs-evidence-pass`, run the evidence plan named by each in-scope document's row in
+`references/document-catalog.md` (full steps in `references/evidence-plans.md`). Each plan step
+is now a direct BobZ MCP tool call — `generate_documentation(programId, programPath,
+perspective=...)`, `explain_code(...)`, `z_code_scan(...)`, `get_variables(...)`, and so on, per
+§1 of the foundations doc — made by the agent, on this turn, with no UI session.
 
-```
-bob-z-app-docs/
-  00-manifest/                    run-history/, evidence-cache/
-  L0-discovery/
-  L1-business-context/
-  L2-business-documentation/      business-features/, feature-catalog/
-  L3-technical-documentation/
-  L4-design/
-  L5-data/
-  L6-integration/
-  L7-operations/
-  L8-modernization/
-  17-qa-validation/
-```
+Write every raw result to `00-manifest/mcp-cache/{PROGRAM}/{tool}.json` (`docgen-architect.json`,
+`docgen-developer.json`, `docgen-business.json`, `explain.json`, `zcodescan.json`,
+`control-flow.json`, `paragraphs.json`, `variables.json`, `data-dictionary.json`). Never re-run a
+tool whose cache file exists and whose source member's `mtime`/`size_bytes` is unchanged —
+compare against `program-inventory.csv`.
 
-For any folder that cannot receive content yet, create a placeholder `README.md`:
+If a tool call errors: record the exact error in `00-manifest/generation-log.md`, mark that
+program's contribution missing, and continue. Never abort the batch on a single tool failure.
+Parse JCL, BMS maps and LINKAGE SECTION source directly with `read_file`/`grep` — these artifact
+types never go through an MCP tool, so this is the one legitimate text-mining step left in the
+pipeline.
 
-```
-# <folder-name>
-Pending — reason will be recorded after scope resolution.
-```
-
-Update these in Step 4. Never delete an existing README that carries real content.
-
----
-
-## Step 4 — Write the manifest
-
-Write `00-manifest/documentation-manifest.json`:
-
-```json
-{
-  "schemaVersion": "1.0",
-  "skillVersion": "1.0.0",
-  "generatedAt": "<exact date from conversation context>",
-  "workspaceRoot": "<resolved>",
-  "docsRoot": "<resolved>",
-  "applicationName": "<resolved>",
-  "applicationNameSource": "user|zapp.yaml|folder-name",
-  "inputMode": "workspace|folder|file-list|inventory-csv|glob",
-  "documentScope": "all|L0-L8|<prompt_type list>",
-  "scope": { "sourceRoots": [], "languagesPresent": [], "languagesAbsent": [] },
-  "environment": {
-    "activeMode": "", "advancedMode": true, "zUnderstandConfigured": false,
-    "localScannerMetadata": "", "bobIdeVersion": "", "zPremiumVersion": ""
-  },
-  "capabilityMap": {},
-  "evidenceCache": { "programsWithDocgen": 0, "programsWithExplain": 0,
-                     "programsWithZCodeScan": 0, "ddGenerated": false },
-  "batches": [],
-  "coverage": {
-    "documentsPlanned": 0, "documentsGenerated": 0, "documentsPartial": 0,
-    "documentsFailed": 0, "documentsReviewed": 0,
-    "ddEntriesQueued": 0, "businessAssumptionsQueued": 0
-  },
-  "approvalPosture": "auto-approved",
-  "provenanceSummary": {},
-  "notApplicable": [],
-  "outOfScope": []
-}
-```
-
-Seed these `outOfScope` entries every run — they hold in all environments:
-
-- **ISO 5055 characteristic scoring, CVE mapping, portfolio quality insights** — supplied by
-  CAST in the original service; no Z Premium equivalent.
-- **DB2/IMS DDL, constraints, triggers, indexes, catalog statistics** — require DBA tooling
-  outside Bob.
-- **Runtime telemetry, SLA/uptime metrics, live scheduler state, SMF data** — no runtime feed.
-- **Container / cloud deployment configuration** — not present on Z unless checked in.
-- **Impact analysis and implementation planning** — require a Z Understand server.
-
-Every folder that will stay empty gets a `README.md` stating whether it is `notApplicable`
-(nothing of this kind exists) or `outOfScope` (exists, but could not be extracted) and why.
-An unexplained empty folder is a defect: it falsely implies "we looked and found nothing."
+If `bob-z-knowledge-extract/` exists, its already-filed artifacts (`DD-master.json`,
+`02-business-rules/by-program/`, `01-application-architecture/`, `10-error-handling/`,
+`05-dependencies/internal-dependencies.json`, `08-jcl-batch/`, `11-code-quality/`) count as
+pre-gathered evidence — do not re-run a tool that tree already answered. Carry its provenance
+labels forward unchanged; never silently upgrade `narrative-per-program-not-tool-verified` to
+`tool-verified` just because it was reused.
 
 ---
 
-## Step 5 — Build the inventories (these are the denominators)
-
-### 5a — Program inventory
-
-Write `00-manifest/program-inventory.csv`, one row per source member:
+## Step 4 — Aggregate the evidence pack
 
 ```
-program_name,file_path,language,size_bytes,line_count,in_scope
+scripts/extract_evidence.py --workspace-root <workspaceRoot>
+                             [--extraction-root <bob-z-knowledge-extract>]
+                             --docs-root <docsRoot>
+                             [--force]
 ```
 
-`program_name` = member name, **upper-case, no extension**. `file_path` relative to
-`workspaceRoot`, forward slashes. Reconcile with an existing file rather than replacing it.
+Exit `0`: `evidence-pack.json` written. Exit `1`: no `program-inventory.csv` and no cached
+evidence of any kind to aggregate. Exit `2`: bad usage.
 
-### 5b — Document ledger
-
-Write `00-manifest/document-ledger.csv` — the single source of truth for completeness:
-
-```
-doc_key,level,scope,feature_name,z_plan,output_path,evidence_gathered,generated,self_check_passed,reviewed,batch_id,run_date,notes
-```
-
-One row per planned document (31 for `all`, plus one extra row per feature for each of the
-three feature-scoped documents). All flag columns start `N`.
-
-A document is **complete** when `evidence_gathered=Y` **AND** `generated=Y` **AND**
-`self_check_passed=Y`. `reviewed` is a separate SME dimension and never blocks completeness.
-
-Use `E` for a pass that errored. Never drop a row.
-
-### 5c — Reuse an existing extraction tree
-
-If `bob-z-knowledge-extract/` exists (produced by the `cobol-knowledge-extraction` skill),
-harvest it as pre-existing evidence before running any workflow:
-
-| Extraction artifact | Feeds |
-|---|---|
-| `03-data-structures/data-dictionary/DD-master.json` | `z-data` step 1 — skip re-running Generate data dictionary |
-| `01-application-architecture/`, `02-business-rules/by-program/` | `z-structure` step 2, `z-business` step 1 |
-| `04-code-flow/` | `z-module` steps 2–3, `z-structure` step 3 |
-| `05-dependencies/internal-dependencies.json` | `z-integration`, `z-structure` step 4 |
-| `08-jcl-batch/` | `z-operations` step 2 |
-| `11-code-quality/` | `z-quality` steps 1–2 |
-
-Record each reuse in `00-manifest/evidence-cache/reused-from-extraction.json` and carry the
-original provenance label forward. Never silently upgrade
-`narrative-per-program-not-tool-verified` to a verified label.
+This script reads `mcp-cache/` and any reused extraction tree — it never calls MCP itself, and it
+never invents a field. A program with no cache file for a tool simply has that field absent from
+its `evidence-pack.json` entry.
 
 ---
 
-## Step 6 — Governance baseline (first run in a workspace only)
+## Step 5 — Compose, self-check, file
 
-1. If no `AGENTS.md` exists, run `/init` in Z Code mode. Copy the result into
-   `00-manifest/AGENTS.md` (the live file stays at the workspace root).
-2. Read `AGENTS.md` — its coding standards and domain terms feed every document's terminology.
-3. Skip both if already done, and say that you skipped them.
+```
+scripts/generate_docs.py [--levels 0,1,2] [--only <prompt_type>] [--force]
+                          [--docs-root <docsRoot>] [--app-name "<override>"]
+```
+
+Exit `0`: every requested document filed. Exit `1`: at least one document failed its self-check
+and was **not** filed — the batch continues with the others. Exit `2`: bad usage.
+
+Section sets come from `references/template-families.md`; out-of-scope distributed-stack
+headings resolve through `references/z-substitutions.md`; anything left over renders
+`Not available from Z Premium analysis`. The self-check enforces: a Coverage note, an Evidence
+Index, every template heading rendered, every derived artifact provenance-labeled, at least one
+artifact recorded as read. Updates `document-ledger.csv` and `generation-log.md` for every
+document actually filed. See "Hand-composition is not permitted" above — this script is not
+optional, and its verdict is not something to talk yourself past.
+
+Generated data-dictionary entries and unverified business assertions still queue to
+`17-qa-validation/dd-review-queue.md` and `17-qa-validation/business-review-queue.md`
+respectively — that gate is unchanged from v1.0.0.
 
 ---
 
-## Step 7 — Select the document batch
+## Step 6 — Cross-document consistency
 
-Documents are generated in **level order** because later levels consume earlier output:
-
-```
-L0 discovery  →  L1 business context  →  L2 business documentation
-              →  L3 technical  →  L4 design  →  L5 data
-              →  L6 integration  →  L7 operations  →  L8 modernization
-```
-
-Rules:
-
-- **L0 first, always.** `application_inventory` establishes the technology profile every other
-  document cites. If it is not complete, generate it before anything else, even if the user
-  asked only for a later level. Say that you did.
-- **Feature-scoped documents need a feature list.** If `business_features` has not run,
-  run it before `feature_catalog` and `business_rules`.
-- **Ceiling: ~100 programs per Generate documentation run.** Split the evidence pass into
-  sub-batches; never exceed.
-- **Ceiling: 8 documents per batch.** Beyond that, close the batch and report before continuing.
-- **Skip documents already complete** (all three flags `Y`). The ledger is the single source
-  of truth — never re-derive completeness from the filesystem.
-- Assign a `batch_id` (`batch-1`, `batch-2`, …) and record it on every row you touch.
-
-State the batch — count and document keys — then proceed immediately without waiting.
+Before closing the batch, verify across everything generated this run: the same program, dataset,
+transaction and field appear under identical names in every document; program/job/table counts
+agree with `program-inventory.csv`; no orphan references; the same fact never carries a stronger
+provenance label in one document than another — the weaker label wins. Record every fix in
+`generation-log.md`.
 
 ---
 
-## Step 8 — Per document: evidence → compose → self-check → file
+## Step 7 — Close the batch and report
 
-For each document in the batch, in this exact order:
+**Report from the scripts' own output, not from what you remember generating.** Read
+`coverage.md` and `document-ledger.csv` (or `generate_docs.py --json`) and report:
 
-### 8a. Load the contract and the template
-
-1. Read `references/grounding-contract.md` (once per session is enough — apply it every time).
-2. Read `references/prompts/<level>-<prompt_type>.md`. It names the document's evidence plan,
-   output path, placeholders and scope.
-3. Read the named plan in `references/evidence-plans.md`.
-
-### 8b. Run the evidence pass
-
-Execute the plan's steps in order against the in-scope programs.
-
-**Check the evidence cache first.** `00-manifest/evidence-cache/` holds one JSON per program
-per workflow:
-
-```
-evidence-cache/{PROGRAM}/docgen-architect.json
-evidence-cache/{PROGRAM}/docgen-developer.json
-evidence-cache/{PROGRAM}/docgen-business.json
-evidence-cache/{PROGRAM}/explain.json
-evidence-cache/{PROGRAM}/zcodescan.json
-evidence-cache/{PROGRAM}/control-flow.json
-evidence-cache/{PROGRAM}/paragraphs.json
-evidence-cache/{PROGRAM}/variables.json
-evidence-cache/_shared/dd-master.json
-evidence-cache/_shared/job-to-program-map.json
-```
-
-Never re-run a workflow whose cached result exists and whose source member is unchanged
-(compare `mtime` and `size_bytes` against `program-inventory.csv`). This is what makes 31
-documents affordable: the service paid a fresh CAST query per prompt; here the workflow cost
-is paid once per program and amortised across every document that needs it.
-
-**If a workflow errors**: record the exact error in `00-manifest/generation-log.md`, mark that
-program's contribution missing, and continue. Do not abort the document or the batch.
-
-Set `evidence_gathered=Y` when the plan's stop condition is met, or `P` (partial) when some
-steps could not run — and name which in the ledger `notes` column.
-
-### 8c. Compose the document
-
-Fill the template's placeholders:
-
-| Placeholder | Value |
-|---|---|
-| `{application_name}` | `applicationName` from Step 1 |
-| `{current_date}` | The date from the conversation context — never invented |
-| `{generated_by}` | `IBM Bob — Z Premium Package workflows` |
-| `{feature_name}` | The feature being documented (feature-scoped documents only) |
-| `{goal}` | The user's stated analysis intent, or omit the line if none was given |
-
-Then:
-
-- Reproduce the template's section set **exactly** — none added, dropped or reordered.
-- Apply `references/z-substitutions.md` wherever the template names a distributed-stack
-  concept. Never re-frame mainframe evidence as REST/microservice concepts.
-- Tag every non-trivial claim: `[source: <workflow or tool> -> <MEMBER / path:lines>]`.
-- End with an **Evidence Index** mapping each major section to what produced it.
-- Any section you could not ground: render the heading, write
-  `Not available from Z Premium analysis`, and add the reason. Add it to the manifest's
-  `notApplicable` or `outOfScope` list.
-- Front-matter every file: `application`, `prompt_type`, `level`, `evidence_plan`,
-  `generated_by`, `generated_on`, `skill_version`, `provenance`.
-
-### 8d. Self-check, then file
-
-Run the self-check in `references/grounding-contract.md` §5. If any box fails, fix the document
-before filing — do not file and note it.
-
-Write to the output path in the reference file. Set `generated=Y` and `self_check_passed=Y`.
-
-### 8e. Queue deferred review
-
-- Data dictionary entries → `17-qa-validation/dd-review-queue.md` as checklist rows: program,
-  variable, proposed meaning, where it was inferred from. Stamp `status: draft`.
-- Business assertions not backed by a workflow or source read →
-  `17-qa-validation/business-review-queue.md`, labelled `Assumption — not tool-verified`.
-- Anything referenced but absent from the program inventory →
-  `17-qa-validation/validation-report.md` as an unresolved reference. Never silently drop it.
-
-On explicit user sign-off later, flip the entry, set `reviewed=Y`, and log the reviewer in
-`17-qa-validation/sme-signoff-log.md`.
-
----
-
-## Step 9 — Cross-document consistency
-
-Before closing the batch, verify across everything generated this run:
-
-1. **Name consistency** — the same program, dataset, transaction and field appear under
-   identical names in every document. Fix drift; never leave two spellings.
-2. **Count consistency** — program counts, job counts and table counts agree with
-   `program-inventory.csv`. A count that disagrees with the inventory is a defect.
-3. **No orphan references** — every member named in a document exists in the inventory or is
-   listed in `validation-report.md` as unresolved.
-4. **Provenance consistency** — the same fact does not carry a verified label in one document
-   and a narrative label in another. The weaker label wins.
-
-Record every fix in `00-manifest/generation-log.md`.
-
----
-
-## Step 10 — Close the batch and report
-
-1. Update every touched ledger row.
-2. Recompute `coverage` in the manifest **from the ledger** — never from memory.
-3. Update `evidenceCache` counts and `provenanceSummary`.
-4. Append a run entry to `00-manifest/generation-log.md` and
-   `00-manifest/run-history/{date}-{batch_id}-summary.md`.
-5. Report to the user — every item below is required; omitting any is a defect:
-   - Mode and approval posture this run ran under.
-   - Documents generated, with per-document status (✅ / ⚠ partial / ❌ failed) and level.
-   - Coverage as **`<complete>/<planned>` plus percentage**, where complete =
-     `evidence_gathered=Y` AND `generated=Y` AND `self_check_passed=Y`.
-   - **Named list of every document not yet complete** and which specific flag is `N`, `P` or `E`.
-   - **Named list of every section rendered `Not available from Z Premium analysis`**, grouped
-     by document, with the reason.
-   - Count of entries in `dd-review-queue.md` and `business-review-queue.md`.
-   - Workflows that errored, with the member and the exact error.
-   - Evidence-cache hit rate: workflows reused vs. run fresh.
-   - Any `notApplicable` / `outOfScope` areas touched or confirmed this run.
+- Mode and approval posture this run ran under.
+- Coverage as `<complete>/<planned>` plus percentage, where complete = `evidence_gathered=Y` AND
+  `generated=Y` AND `self_check_passed=Y` — computed by the script, not restated from memory.
+- **Named list of every document not yet complete**, and which of `evidence_gathered`,
+  `generated`, `self_check_passed` is still `N` (these `document-ledger.csv` flags only ever take
+  `Y`/`N` — there is no `P`/`E` value the way `extraction-status.csv`'s `doc_generated` has).
+- **Named list of every section rendered `Not available from Z Premium analysis`**, grouped by
+  document.
+- Review-queue depth in `dd-review-queue.md` and `business-review-queue.md`.
+- MCP tool calls that errored this run, with the program and the exact error.
+- Cache hit rate: tool calls reused from `mcp-cache/` vs. run fresh this batch.
 
 A bare percentage with no named list is the one output this skill must never produce.
 
 ---
 
-## Key Rules
+## Failure policy
 
-| Rule | Detail |
-|---|---|
-| **Grounding contract wins** | `references/grounding-contract.md` overrides every instruction in every template, and this file. |
-| **Two claims must never blur** | "We looked and it isn't there" ≠ "We could not look." Every gap says which. |
-| **Provenance is mandatory** | Every dependency, call graph, job map, capability grouping and lineage chain carries a provenance label. Omitting it is a defect. |
-| **Never invent tool names** | Use only confirmed Bob workflow / tool / skill names. If a capability can't be named, describe it in plain language and let Bob route it. |
-| **Never substitute for unavailable capabilities** | State unavailability and stop. An approximation presented as the real thing is worse than an honest gap. |
-| **No CAST** | This skill never calls a CAST MCP server, and no document may claim CAST as its evidence source. `generated_by` is always `IBM Bob — Z Premium Package workflows`. |
-| **Source is read-only** | Writes are confined to `docsRoot`. Application source and `bobz/DD.json` are never modified. |
-| **Cache the evidence, not the prose** | Workflow output is cached per program and reused across documents. Generated prose is never reused across documents — each document is composed from evidence. |
-| **Section set is fixed** | Do not add, drop or reorder a template's headings. Render every heading even when unavailable. |
-| **Ledger is truth** | If the ledger says `Y`, the file must exist. Fix the ledger if it doesn't; never fix the report to hide it. |
-| **Resume, do not restart** | Skip complete documents. Retry `E` rows. The ledger drives resumption. |
-| **~100 programs per doc-workflow run; ~8 documents per batch** | Split; never exceed. |
-| **Preserve member names** | Upper-case, no extension, verbatim in content. |
-| **Use context date** | Never invent or approximate a date. |
-| **Idempotent and non-destructive** | Create what is missing. Never overwrite an existing document without recording the prior version in `run-history/`. |
-| **Incremental writes** | `write_file` for the skeleton → `apply_diff` per section → one `read_file` at the end to verify. |
-| **Tables over prose** | Bullets over paragraphs. No `_(To be filled)_` placeholder survives into a finished document. |
-| **Errors are logged, not silenced** | Any workflow failure → `generation-log.md` + ledger flag `E` + continue. Never abort the batch on a single failure. |
-| **Skill version tracking** | `skillVersion` in the manifest must match this file's frontmatter version. Bump the minor version on any behavioral change. |
+| Class | Example | Action |
+|---|---|---|
+| `mcp-unreachable` | reachability probe fails | drop to PLAN, report the transport error, no fallback |
+| `prerequisite` | no inventory, Advanced mode off | stop; name the fix |
+| `evidence-missing` | a plan's tools returned nothing for a program | mark that program's contribution missing, continue |
+| `evidence-partial` | some programs lack a cache entry | generate, mark `partial`, state coverage |
+| `template-gap` | a stub template (Family C) | use `template-families.md`'s fixed section set |
+| `self-check-fail` | ungrounded field, missing Evidence Index | fix the evidence, re-run the script; never hand-file |
+
+One document failing never stops the batch. Record it and continue.
+
+## Communication
+
+Progress, not process. Do not name plan ids, tool names or cache paths in prose to the user
+unless they asked. Report which documents exist, what they cover, and what is missing. When
+coverage is partial, say so first.

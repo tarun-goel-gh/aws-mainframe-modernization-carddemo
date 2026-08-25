@@ -1,0 +1,25 @@
+{
+  "probedAt": "2026-08-24T12:00:00Z",
+  "mcpReachable": true,
+  "mcpProbeMethod": "get_paragraphs(programId=CBACT01C)",
+  "mcpProbeLatencyMs": 150,
+  "mcpServerVersion": "3.1.0",
+  "activeMode": "Z Code",
+  "advancedMode": true,
+  "zUnderstandConfigured": false,
+  "localScannerMetadata": "local",
+  "capabilityMap": {
+    "generate_data_dictionary": "available",
+    "generate_documentation": "available",
+    "explain_code": "available",
+    "z_code_scan": "available",
+    "get_variables": "available",
+    "get_control_flow": "available",
+    "get_paragraphs": "available",
+    "scan_program": "available",
+    "get_expanded_source": "available",
+    "edit_data_dictionary": "available",
+    "refactor": "unverified",
+    "generate_refactored_service": "unverified"
+  }
+}
