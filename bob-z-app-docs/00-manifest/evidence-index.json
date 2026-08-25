@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-08-25T09:56:59Z",
+  "workspaceRoot": ".",
+  "extractionRoot": ".\\bob-z-knowledge-extract",
+  "docsRoot": ".\\bob-z-app-docs",
+  "artifacts": [
+    {
+      "path": ".\\bob-z-app-docs\\00-manifest\\mcp-capability-probe.json",
+      "sha256": "a56dae70aba58e1ba6b02864dbbe150f634f723941e4ce64d60a9e03138d9456",
+      "plans": [
+        "all"
+      ]
+    },
+    {
+      "path": ".\\bob-z-knowledge-extract\\00-manifest\\program-inventory.csv",
+      "sha256": "dcfed137db1398411180ea0a31ab4b17481875b84b70a668f46a2ed29aa42087",
+      "plans": [
+        "all"
+      ]
+    },
+    {
+      "path": ".\\bob-z-knowledge-extract\\00-manifest\\extraction-status.csv",
+      "sha256": "fe12475a3aa5d84074d90e66fb935aff928d16039a5e086549cbaf90ce2bfa11",
+      "plans": [
+        "all"
+      ]
+    },
+    {
+      "path": ".\\bob-z-knowledge-extract\\00-manifest\\extraction-manifest.json",
+      "sha256": "cfe49e190b6132c64b34c63dc9d7b1bb9af4ff8902a0dae2be5fa36c9eee103e",
+      "plans": [
+        "all"
+      ]
+    },
+    {
+      "path": ".\\bob-z-knowledge-extract\\05-dependencies\\internal-dependencies.json",
+      "sha256": "8bff68745085c0b1ed25c2c16cd2772d75cdfcfb3ce03e49218e30f95ebf1034",
+      "plans": [
+        "z-structure",
+        "z-integration"
+      ]
+    }
+  ],
+  "documents": {
+    "_manifest": {
+      ".\\bob-z-app-docs\\00-manifest\\mcp-capability-probe.json": "a56dae70aba58e1ba6b02864dbbe150f634f723941e4ce64d60a9e03138d9456",
+      ".\\bob-z-knowledge-extract\\00-manifest\\program-inventory.csv": "dcfed137db1398411180ea0a31ab4b17481875b84b70a668f46a2ed29aa42087",
+      ".\\bob-z-knowledge-extract\\00-manifest\\extraction-status.csv": "fe12475a3aa5d84074d90e66fb935aff928d16039a5e086549cbaf90ce2bfa11",
+      ".\\bob-z-knowledge-extract\\00-manifest\\extraction-manifest.json": "cfe49e190b6132c64b34c63dc9d7b1bb9af4ff8902a0dae2be5fa36c9eee103e",
+      ".\\bob-z-knowledge-extract\\05-dependencies\\internal-dependencies.json": "8bff68745085c0b1ed25c2c16cd2772d75cdfcfb3ce03e49218e30f95ebf1034"
+    }
+  }
+}

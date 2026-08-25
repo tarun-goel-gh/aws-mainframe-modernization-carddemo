@@ -16,6 +16,6 @@ Locate `bob-z-knowledge-extract/` (at $1 if given, otherwise the open workspace 
    reconciliation defects, report them explicitly.
 4. Any ledger row marked `Y` whose corresponding artifact file is missing on disk.
 5. Every `notApplicable` and `outOfScope` area recorded in the manifest, with its reason.
-6. Whether the Step 9 Refactor question has been resolved in `00-manifest/extraction-log.md`.
+6. Whether the Step 12 Refactor question has been resolved in `00-manifest/extraction-log.md`.
 
 Never report a bare percentage without the named list.

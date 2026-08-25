@@ -1,0 +1,15 @@
+{
+  "verifiedAt": "2026-08-25T09:56:20Z",
+  "extractionRoot": "C:/Users/IshitaSinghal/aws-mainframe/aws-mainframe-modernization-carddemo/bob-z-knowledge-extract",
+  "batchId": null,
+  "rowsChecked": 46,
+  "flagsChecked": {
+    "dd_generated": 0,
+    "doc_generated": 0,
+    "explain_done": 0,
+    "zcodescan_done": 0
+  },
+  "defectCount": 0,
+  "defects": [],
+  "clean": true
+}
